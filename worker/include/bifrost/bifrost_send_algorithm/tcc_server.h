@@ -37,7 +37,7 @@ class TransportCongestionControlServer
  public:
   TransportCongestionControlServer(
       TransportCongestionControlServer::Observer* observer,
-      size_t maxRtcpPacketLen, UvLoop** uv_loop);
+      size_t maxRtcpPacketLen, UvLoop* uv_loop);
   virtual ~TransportCongestionControlServer();
 
  public:

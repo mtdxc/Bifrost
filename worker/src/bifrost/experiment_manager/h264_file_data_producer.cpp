@@ -41,7 +41,7 @@ H264FileDataProducer::H264FileDataProducer(uint32_t ssrc, UvLoop *loop)
 
   this->h264_data_file_.close();
 
-  this->read_frame_timer_ = new UvTimer(this, loop->get_loop().get());
+  this->read_frame_timer_ = new UvTimer(this, loop->get_loop());
   this->read_frame_timer_->Start(IntervalReadFrameMs, IntervalReadFrameMs);
 }
 

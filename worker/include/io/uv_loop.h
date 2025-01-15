@@ -24,7 +24,7 @@ class UvLoop {
   void RunLoop();
 
  public:
-  UvLoopTPtr get_loop() { return this->loop_; }
+  uv_loop_t* get_loop() { return this->loop_.get(); }
   uint32_t get_time_s() {
     return static_cast<uint32_t>(uv_hrtime() / 1000000000u);
   }

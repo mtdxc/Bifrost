@@ -101,7 +101,6 @@ class SenderReportPacket : public RtcpPacket {
   size_t GetCount() const override { return 0; }
   size_t GetSize() const override {
     size_t size = sizeof(RtcpPacket::CommonHeader);
-
     for (auto* report : this->reports) {
       size += report->GetSize();
     }

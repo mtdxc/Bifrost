@@ -20,10 +20,10 @@ static constexpr size_t PacketLossHistogramLength{24};
 
 TransportCongestionControlServer::TransportCongestionControlServer(
     TransportCongestionControlServer::Observer* observer,
-    size_t maxRtcpPacketLen, UvLoop** uv_loop)
+    size_t maxRtcpPacketLen, UvLoop* uv_loop)
     : observer_(observer),
       maxRtcpPacketLen(maxRtcpPacketLen),
-      uv_loop_(*uv_loop) {
+      uv_loop_(uv_loop) {
   this->transportCcFeedbackPacket =
       std::make_shared<FeedbackRtpTransportPacket>(0u, 0u);
 
@@ -35,7 +35,7 @@ TransportCongestionControlServer::TransportCongestionControlServer(
 
   // Create the feedback send periodic timer.
   this->transportCcFeedbackSendPeriodicTimer =
-      new UvTimer(this, this->uv_loop_->get_loop().get());
+      new UvTimer(this, this->uv_loop_->get_loop());
 
   this->transportCcFeedbackSendPeriodicTimer->Start(
       TransportCcFeedbackSendInterval, TransportCcFeedbackSendInterval);

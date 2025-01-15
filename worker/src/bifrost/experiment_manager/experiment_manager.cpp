@@ -51,7 +51,7 @@ ExperimentManager::ExperimentManager()
   this->uv_loop_->ClassInit();
 
   // 3.创建落地定时器
-  this->dump_data_timer_ = new UvTimer(this, this->uv_loop_->get_loop().get());
+  this->dump_data_timer_ = new UvTimer(this, this->uv_loop_->get_loop());
   this->dump_data_timer_->Start(DefaultDumpDataInterval,
                                 DefaultDumpDataInterval);
 }

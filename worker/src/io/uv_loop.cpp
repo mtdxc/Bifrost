@@ -19,7 +19,6 @@ void UvLoop::ClassInit() {
   this->loop_ = std::make_shared<uv_loop_t>();
 
   int err = uv_loop_init(this->loop_.get());
-
   if (err != 0) std::cout << "[uv loop] initialization failed" << std::endl;
 }
 

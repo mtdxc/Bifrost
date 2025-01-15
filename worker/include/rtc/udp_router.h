@@ -11,12 +11,8 @@
 #ifndef WORKER_CLIENT_SERVER_H
 #define WORKER_CLIENT_SERVER_H
 
-#include <string>
-#include <unordered_map>
-#include <vector>
-
+#include "setting.h"
 #include "common.h"
-#include "port_manager.h"
 #include "udp_socket.h"
 
 namespace bifrost {
@@ -25,22 +21,19 @@ class UdpRouter : public UdpSocket {
   class UdpRouterObServer {
    public:
     virtual void OnUdpRouterRtpPacketReceived(
-        bifrost::UdpRouter* socket, RtpPacketPtr rtp_packet,
+        UdpRouter* socket, RtpPacketPtr rtp_packet,
         const struct sockaddr* remote_addr) = 0;
     virtual void OnUdpRouterRtcpPacketReceived(
-        bifrost::UdpRouter* socket, RtcpPacketPtr rtcp_packet,
+        UdpRouter* socket, RtcpPacketPtr rtcp_packet,
         const struct sockaddr* remote_addr) = 0;
   };
   typedef std::shared_ptr<UdpRouterObServer> UdpRouterObServerPtr;
 
  public:
   /* Instance methods. */
-  UdpRouter(uv_loop_t* loop, UdpRouterObServer* observer)
-      : observer_(observer), UdpSocket(PortManager::BindUdp(loop)) {}
-  UdpRouter(Settings::Configuration config, uv_loop_t* loop,
-            UdpRouterObServer* observer)
-      : observer_(observer),
-        UdpSocket(PortManager::BindUdp(std::move(config), loop)) {}
+  UdpRouter(uv_loop_t* loop, UdpRouterObServer* observer);
+  UdpRouter(Settings::Configuration config, uv_loop_t* loop, UdpRouterObServer* observer);
+
   UdpRouter(UdpRouter& other) = delete;
   void operator=(const UdpRouter&) = delete;
   ~UdpRouter() override;

@@ -14,7 +14,7 @@ namespace bifrost {
 const uint32_t InitialAvailableGccBitrate = 400000u;
 
 BifrostSendAlgorithmManager::BifrostSendAlgorithmManager(
-    quic::CongestionControlType congestion_algorithm_type, UvLoop** uv_loop) {
+    quic::CongestionControlType congestion_algorithm_type, UvLoop* uv_loop) {
   switch (congestion_algorithm_type) {
     case quic::kCubicBytes:
     case quic::kRenoBytes:

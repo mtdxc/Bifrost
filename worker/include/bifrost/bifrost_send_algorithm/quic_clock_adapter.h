@@ -16,7 +16,7 @@
 namespace bifrost {
 class QuicClockAdapter : public quic::QuicClock {
  public:
-  QuicClockAdapter(UvLoop** uv_loop) : uv_loop_(*uv_loop) {}
+  QuicClockAdapter(UvLoop* uv_loop) : uv_loop_(uv_loop) {}
 
   quic::QuicTime ApproximateNow() const override {
     return quic::QuicTime::Zero() + quic::QuicTimeDelta::FromMilliseconds(

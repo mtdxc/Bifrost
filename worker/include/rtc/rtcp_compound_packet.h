@@ -15,12 +15,11 @@
 #include "rtcp_sr.h"
 
 namespace bifrost {
-class CompoundPacket
-    {
-     public:
+class CompoundPacket {
+    public:
       CompoundPacket() = default;
 
-     public:
+    public:
       const uint8_t* GetData() const
       {
         return this->header;

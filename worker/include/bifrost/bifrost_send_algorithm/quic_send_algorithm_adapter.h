@@ -18,7 +18,7 @@
 namespace bifrost {
 class QuicSendAlgorithmAdapter : public BifrostSendAlgorithmInterface {
  public:
-  QuicSendAlgorithmAdapter(UvLoop** uv_loop,
+  QuicSendAlgorithmAdapter(UvLoop* uv_loop,
                            quic::CongestionControlType congestion_type);
   ~QuicSendAlgorithmAdapter();
 
@@ -34,12 +34,10 @@ class QuicSendAlgorithmAdapter : public BifrostSendAlgorithmInterface {
     }
     return false;
   }
-  void OnReceiveReceiverReport(webrtc::RTCPReportBlock report, float rtt,
-                               int64_t nowMs) override {}
+  void OnReceiveReceiverReport(webrtc::RTCPReportBlock report, float rtt, int64_t nowMs) override {}
   void UpdateRtt(float rtt) override;
   uint32_t get_pacing_rate(uint32_t bytes_inflight) override {
-    return send_algorithm_interface_->PacingRate(bytes_inflight)
-        .ToBitsPerSecond();
+    return send_algorithm_interface_->PacingRate(bytes_inflight).ToBitsPerSecond();
   }
   uint32_t get_congestion_windows() {
     return send_algorithm_interface_->GetCongestionWindow();

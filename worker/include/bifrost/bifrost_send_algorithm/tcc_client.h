@@ -75,7 +75,7 @@ class TransportCongestionControlClient
  public:
   TransportCongestionControlClient(
       TransportCongestionControlClient::Observer* observer,
-      uint32_t initial_available_bitrate, UvLoop** uv_loop);
+      uint32_t initial_available_bitrate, UvLoop* uv_loop);
   ~TransportCongestionControlClient() override;
 
  public:

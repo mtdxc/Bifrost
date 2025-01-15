@@ -18,14 +18,12 @@
 #include "quiche/quic/core/quic_types.h"
 
 namespace bifrost {
-typedef std::shared_ptr<BifrostSendAlgorithmInterface>
-    BifrostSendAlgorithmInterfacePtr;
 
 class BifrostSendAlgorithmManager
     : public TransportCongestionControlClient::Observer {
  public:
   BifrostSendAlgorithmManager(
-      quic::CongestionControlType congestion_algorithm_type, UvLoop** uv_loop);
+      quic::CongestionControlType congestion_algorithm_type, UvLoop* uv_loop);
   ~BifrostSendAlgorithmManager() override { algorithm_interface_.reset(); }
 
  public:
@@ -60,7 +58,7 @@ class BifrostSendAlgorithmManager
   }
 
  private:
-  BifrostSendAlgorithmInterfacePtr algorithm_interface_;
+  std::shared_ptr<BifrostSendAlgorithmInterface> algorithm_interface_;
 };
 
 }  // namespace bifrost

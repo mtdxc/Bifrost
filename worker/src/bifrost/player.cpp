@@ -27,10 +27,10 @@ const int64_t kMaxWaitTime = 10000;
 constexpr int kPacketBufferStartSize = 512;
 constexpr int kPacketBufferMaxSize = 2048;
 
-Player::Player(const struct sockaddr* remote_addr, UvLoop** uv_loop,
+Player::Player(const struct sockaddr* remote_addr, UvLoop* uv_loop,
                Observer* observer, uint32_t ssrc, uint8_t number,
                ExperimentManagerPtr& experiment_manager)
-    : uv_loop_(*uv_loop),
+    : uv_loop_(uv_loop),
       observer_(observer),
       ssrc_(ssrc),
       experiment_manager_(experiment_manager),
@@ -69,7 +69,7 @@ Player::Player(const struct sockaddr* remote_addr, UvLoop** uv_loop,
 
   // 3.tcc server
   this->tcc_server_ = std::make_shared<TransportCongestionControlServer>(
-      this, MtuSize, &this->uv_loop_);
+      this, MtuSize, this->uv_loop_);
 
   // 4.timing
   timing_ = new webrtc::VCMTiming(clock_);
@@ -81,7 +81,7 @@ Player::Player(const struct sockaddr* remote_addr, UvLoop** uv_loop,
                              webrtc::kMaxNumberOfFrames, 0);
 
   // 6.decoder timer
-  decoder_timer_ = new UvTimer(this, uv_loop_->get_loop().get());
+  decoder_timer_ = new UvTimer(this, uv_loop_->get_loop());
   decoder_timer_->Start(DecoderIntervalMs, DecoderIntervalMs);
 #endif
 
@@ -195,7 +195,7 @@ void Player::OnReceiveRtpPacket(RtpPacketPtr packet, bool is_recover) {
     if (is_fec_packet) {
       if (fec_nack_ == nullptr) {
         fec_nack_ =
-            std::make_shared<Nack>(packet->GetSsrc(), &this->uv_loop_, this);
+            std::make_shared<Nack>(packet->GetSsrc(), this->uv_loop_, this);
       }
       fec_nack_->OnReceiveRtpPacket(packet);
       return;

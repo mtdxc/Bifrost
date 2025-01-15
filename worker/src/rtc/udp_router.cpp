@@ -8,17 +8,18 @@
  *******************************************************/
 
 #include "udp_router.h"
-
-#include <iostream>
-#include <sstream>
-#include <string>
-
 #include "rtcp_packet.h"
-#include "rtcp_tcc.h"
+#include "port_manager.h"
 #include "rtp_packet.h"
 #include "utils.h"
 
 namespace bifrost {
+UdpRouter::UdpRouter(uv_loop_t* loop, UdpRouterObServer* observer)
+    : observer_(observer), UdpSocket(PortManager::BindUdp(loop)) {}
+
+UdpRouter::UdpRouter(Settings::Configuration config, uv_loop_t* loop, UdpRouterObServer* observer)
+    : observer_(observer), UdpSocket(PortManager::BindUdp(std::move(config), loop)) {}
+
 UdpRouter::~UdpRouter() {
   PortManager::UnbindUdp(this->local_ip_, this->local_port_);
 }
@@ -28,13 +29,11 @@ void UdpRouter::UserOnUdpDatagramReceived(const uint8_t* data, size_t len,
   if (RtcpPacket::IsRtcp(data, len)) {
     auto rtcp_packet = RtcpPacket::Parse(data, len);
     if (rtcp_packet == nullptr) return;
-    this->observer_->OnUdpRouterRtcpPacketReceived(this, rtcp_packet,
-                                                   remote_addr);
+    this->observer_->OnUdpRouterRtcpPacketReceived(this, rtcp_packet, remote_addr);
   } else if (RtpPacket::IsRtp(data, len)) {
     auto rtp_packet = std::make_shared<RtpPacket>(data, len);
     if (rtp_packet == nullptr) return;
-    this->observer_->OnUdpRouterRtpPacketReceived(this, rtp_packet,
-                                                  remote_addr);
+    this->observer_->OnUdpRouterRtpPacketReceived(this, rtp_packet, remote_addr);
   }
 }
 }  // namespace bifrost

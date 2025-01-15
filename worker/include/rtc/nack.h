@@ -14,8 +14,6 @@
 #include <vector>
 
 #include "common.h"
-#include "quiche/quic/core/quic_types.h"
-#include "quiche/quic/core/quic_unacked_packet_map.h"
 #include "rtcp_nack.h"
 #include "uv_loop.h"
 #include "uv_timer.h"
@@ -48,8 +46,8 @@ class Nack : UvTimer::Listener {
   };
 
  public:
-  Nack(uint32_t ssrc, UvLoop** uv_loop);
-  Nack(uint32_t ssrc, UvLoop** uv_loop, Player* player);
+  Nack(uint32_t ssrc, UvLoop* uv_loop);
+  Nack(uint32_t ssrc, UvLoop* uv_loop, Player* player);
   ~Nack();
 
   // OnTimer

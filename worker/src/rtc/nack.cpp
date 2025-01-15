@@ -21,15 +21,15 @@ constexpr uint8_t MaxNackRetries{20u};
 constexpr uint64_t TimerInterval{20u};
 
 /* Instance methods. */
-Nack::Nack(uint32_t ssrc, UvLoop** uv_loop)
-    : ssrc_(ssrc), rtt_(DefaultRtt), uv_loop_(*uv_loop) {}
+Nack::Nack(uint32_t ssrc, UvLoop* uv_loop)
+    : ssrc_(ssrc), rtt_(DefaultRtt), uv_loop_(uv_loop) {}
 
-Nack::Nack(uint32_t ssrc, UvLoop** uv_loop, Player* player)
+Nack::Nack(uint32_t ssrc, UvLoop* uv_loop, Player* player)
     : ssrc_(ssrc),
       rtt_(DefaultRtt),
-      uv_loop_(*uv_loop),
+      uv_loop_(uv_loop),
       player_(std::move(player)) {
-  this->nack_timer_ = new UvTimer(this, this->uv_loop_->get_loop().get());
+  this->nack_timer_ = new UvTimer(this, this->uv_loop_->get_loop());
   this->nack_timer_->Start(TimerInterval, TimerInterval);
 }
 

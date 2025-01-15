@@ -41,14 +41,14 @@ BifrostPacer::BifrostPacer(uint32_t ssrc, uint32_t flexfec_ssrc,
 #endif
 
   // 2.发送定时器
-  pacer_timer_ = new UvTimer(this, uv_loop->get_loop().get());
+  pacer_timer_ = new UvTimer(this, uv_loop->get_loop());
   pacer_timer_->Start(pacer_timer_interval_);
 
-  create_timer_ = new UvTimer(this, uv_loop->get_loop().get());
+  create_timer_ = new UvTimer(this, uv_loop->get_loop());
   create_timer_->Start(DefaultCreatePacketTimeInterval,
                        DefaultCreatePacketTimeInterval);
 
-  statistics_timer_ = new UvTimer(this, uv_loop->get_loop().get());
+  statistics_timer_ = new UvTimer(this, uv_loop->get_loop());
   statistics_timer_->Start(DefaultStatisticsTimerInterval,
                            DefaultStatisticsTimerInterval);
 

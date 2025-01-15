@@ -13,10 +13,9 @@
 #include "bifrost/experiment_manager/experiment_manager.h"
 #include "player.h"
 #include "publisher.h"
-#include "quiche/quic/core/quic_types.h"
 #include "rtcp_compound_packet.h"
 #include "udp_router.h"
-#include "unordered_map"
+#include <unordered_map>
 #include "uv_loop.h"
 
 namespace bifrost {
@@ -32,7 +31,7 @@ class Transport : public UdpRouter::UdpRouterObServer,
     SinglePlay,
     SinglePublishAndPlays,
   };
-
+  static const char* ModelStr(TransportModel model);
  public:
   Transport(TransportModel model, uint8_t number,
             ExperimentManagerPtr& experiment_manager,
@@ -77,7 +76,7 @@ class Transport : public UdpRouter::UdpRouterObServer,
   // router
   UdpRouterPtr udp_router_;
 
-  // players
+  // players: ssrc->player
   std::unordered_map<uint32_t, PlayerPtr> players_;
 
   // publisher

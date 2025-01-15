@@ -46,11 +46,9 @@ class FeedbackRtpItemsPacket : public FeedbackRtpPacket {
   size_t Serialize(uint8_t* buffer) override;
   size_t GetSize() const override {
     size_t size = FeedbackRtpPacket::GetSize();
-
     for (auto* item : this->items) {
       size += item->GetSize();
     }
-
     return size;
   }
 

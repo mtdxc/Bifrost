@@ -14,24 +14,24 @@
 #include "rtcp_quic_feedback.h"
 
 namespace bifrost {
+const char* Transport::ModelStr(TransportModel model) {
+  switch (model) {
+    case SinglePublish:
+      return "SinglePublish";
+    case SinglePlay:
+      return "SinglePlay";
+    case SinglePublishAndPlays:
+      return "SinglePublishAndPlays";
+    default:
+      return "Error";
+  }
+}
+
 Transport::Transport(TransportModel model, uint8_t number,
                      ExperimentManagerPtr& experiment_manager,
                      quic::CongestionControlType quic_congestion_type)
     : model_(model), number_(number), experiment_manager_(experiment_manager) {
-  std::cout << "now use model:" <<
-      [&]() {
-        switch (model) {
-          case SinglePublish:
-            return "SinglePublish";
-          case SinglePlay:
-            return "SinglePlay";
-          case SinglePublishAndPlays:
-            return "SinglePublishAndPlays";
-          default:
-            return "Error";
-        }
-      }() << " you can change this model in main.cpp!"
-            << std::endl;
+  std::cout << "now use model:" << ModelStr(model) << " you can change this model in main.cpp!" << std::endl;
 
   this->uv_loop_ = new UvLoop;
 
@@ -49,7 +49,7 @@ Transport::Transport(TransportModel model, uint8_t number,
     case SinglePublish: {
       // 2.publisher
       this->publisher_ = std::make_shared<Publisher>(
-          remote_config, &this->uv_loop_, this, number, experiment_manager_,
+          remote_config, this->uv_loop_, this, number, experiment_manager_,
           quic_congestion_type);
       break;
     }
@@ -59,16 +59,15 @@ Transport::Transport(TransportModel model, uint8_t number,
     //   4.1 don't use default model : just get config default
 #ifdef USING_DEFAULT_AF_CONFIG
   this->udp_router_ =
-      std::make_shared<UdpRouter>(this->uv_loop_->get_loop().get(), this);
+      std::make_shared<UdpRouter>(this->uv_loop_->get_loop(), this);
 #else
   //   4.2 use default model : get config by json file
   this->udp_router_ = std::make_shared<UdpRouter>(
-      local_config, this->uv_loop_->get_loop().get(), this);
+      local_config, this->uv_loop_->get_loop(), this);
 #endif
 }
 
 Transport::~Transport() {
-  if (this->uv_loop_ != nullptr) delete this->uv_loop_;
   if (this->udp_router_ != nullptr) this->udp_router_.reset();
   if (this->publisher_ != nullptr) this->publisher_.reset();
 
@@ -76,6 +75,7 @@ Transport::~Transport() {
   for (; iter != this->players_.end(); iter++) {
     iter->second.reset();
   }
+  if (this->uv_loop_ != nullptr) delete this->uv_loop_;
 }
 
 void Transport::Run() { this->uv_loop_->RunLoop(); }
@@ -84,13 +84,13 @@ void Transport::OnUdpRouterRtpPacketReceived(
     bifrost::UdpRouter* socket, RtpPacketPtr rtp_packet,
     const struct sockaddr* remote_addr) {
   if (model_ == SinglePublish) return;
-  auto player_iter = this->players_.find(rtp_packet->GetSsrc());
 
+  auto player_iter = this->players_.find(rtp_packet->GetSsrc());
   if (player_iter != this->players_.end()) {
     player_iter->second->OnReceiveRtpPacket(rtp_packet, false);
   } else {
     if (rtp_packet->GetPayloadType() != 110) {
-      auto player = std::make_shared<Player>(remote_addr, &this->uv_loop_, this,
+      auto player = std::make_shared<Player>(remote_addr, this->uv_loop_, this,
                                              rtp_packet->GetSsrc(), this->number_,
                                              this->experiment_manager_);
       this->players_[rtp_packet->GetSsrc()] = player;
@@ -102,7 +102,7 @@ void Transport::OnUdpRouterRtpPacketReceived(
         fec_player_iter->second->OnReceiveRtpPacket(rtp_packet, false);
       } else {
         auto player = std::make_shared<Player>(
-            remote_addr, &this->uv_loop_, this, rtp_packet->GetSsrc() - 1,
+            remote_addr, this->uv_loop_, this, rtp_packet->GetSsrc() - 1,
             this->number_, this->experiment_manager_);
         this->players_[rtp_packet->GetSsrc() - 1] = player;
         player->OnReceiveRtpPacket(rtp_packet, false);
@@ -114,15 +114,13 @@ void Transport::OnUdpRouterRtpPacketReceived(
 void Transport::OnUdpRouterRtcpPacketReceived(
     bifrost::UdpRouter* socket, RtcpPacketPtr rtcp_packet,
     const struct sockaddr* remote_addr) {
-  //  std::cout << "rtcp:" << Byte::bytes_to_hex(rtcp_packet->GetData(),
-  //  rtcp_packet->GetSize()) << " rtcp"<< std::endl;
+  //  std::cout << "rtcp:" << Byte::bytes_to_hex(rtcp_packet->GetData(), rtcp_packet->GetSize()) << std::endl;
   auto type = rtcp_packet->GetType();
   switch (type) {
     case Type::RR: {
       auto* rr = static_cast<ReceiverReportPacket*>(rtcp_packet.get());
       for (auto it = rr->Begin(); it != rr->End(); ++it) {
-        auto& report = *it;
-        this->publisher_->OnReceiveReceiverReport(report);
+        this->publisher_->OnReceiveReceiverReport(*it);
       }
       break;
     }
@@ -132,16 +130,16 @@ void Transport::OnUdpRouterRtcpPacketReceived(
         auto& report = *it;
         auto player_iter = this->players_.find(report->GetSsrc());
         if (player_iter != this->players_.end()) {
-          player_iter->second->OnReceiveSenderReport(report);
+          auto player = player_iter->second;
+          player->OnReceiveSenderReport(report);
 
           // 立刻回复rr
-          std::unique_ptr<CompoundPacket> packet =
-              std::make_unique<CompoundPacket>();
-          auto* report = player_iter->second->GetRtcpReceiverReport();
-          packet->AddReceiverReport(report);
-          packet->Serialize(Buffer);
-          this->udp_router_->Send(packet->GetData(), packet->GetSize(),
-                                  remote_addr, nullptr);
+          if (auto* report = player->GetRtcpReceiverReport()) {
+            std::unique_ptr<CompoundPacket> packet = std::make_unique<CompoundPacket>();
+            packet->AddReceiverReport(report);
+            packet->Serialize(Buffer);
+            this->udp_router_->Send(packet->GetData(), packet->GetSize(), remote_addr, nullptr);
+          }
         }
       }
       break;

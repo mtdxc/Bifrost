@@ -27,7 +27,6 @@ UvTimer::UvTimer(Listener* listener, uv_loop_t* loop) : listener(listener) {
   this->uvHandle->data = static_cast<void*>(this);
 
   int err = uv_timer_init(loop, this->uvHandle);
-
   if (err != 0) {
     delete this->uvHandle;
     this->uvHandle = nullptr;
@@ -57,7 +56,6 @@ void UvTimer::Start(uint64_t timeout, uint64_t repeat) {
 
   int err = uv_timer_start(this->uvHandle, static_cast<uv_timer_cb>(onTimer),
                            timeout, repeat);
-
   if (err != 0) std::cout << "[timer] uv timer start err" << std::endl;
 }
 
@@ -65,7 +63,6 @@ void UvTimer::Stop() {
   if (this->closed) return;
 
   int err = uv_timer_stop(this->uvHandle);
-
   if (err != 0) std::cout << "[timer] uv timer stop err" << std::endl;
 }
 
@@ -78,7 +75,6 @@ void UvTimer::Reset() {
 
   int err = uv_timer_start(this->uvHandle, static_cast<uv_timer_cb>(onTimer),
                            this->repeat, this->repeat);
-
   if (err != 0) std::cout << "[timer] uv timer reset start err" << std::endl;
 }
 
@@ -89,7 +85,6 @@ void UvTimer::Restart() {
 
   int err = uv_timer_start(this->uvHandle, static_cast<uv_timer_cb>(onTimer),
                            this->timeout, this->repeat);
-
   if (err != 0) std::cout << "[timer] uv timer restart err" << std::endl;
 }
 

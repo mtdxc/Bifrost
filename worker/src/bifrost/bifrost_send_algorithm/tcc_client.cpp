@@ -33,12 +33,12 @@ static uint8_t ProbationPacketHeader[] = {
 /* Instance methods. */
 TransportCongestionControlClient::TransportCongestionControlClient(
     TransportCongestionControlClient::Observer* observer,
-    uint32_t initial_available_bitrate, UvLoop** uv_loop)
+    uint32_t initial_available_bitrate, UvLoop* uv_loop)
     : observer_(observer),
       initial_available_bitrate_(
           std::max<uint32_t>(initial_available_bitrate, MinBitrate)),
       max_outgoing_bitrate_(MaxAvailableBitrate),
-      uv_loop_(*uv_loop) {
+      uv_loop_(uv_loop) {
   webrtc::GoogCcFactoryConfig config;
 
   // Provide RTCP feedback as well as Receiver Reports.
@@ -103,7 +103,7 @@ void TransportCongestionControlClient::InitializeController() {
   // videos are muted or using screensharing with still images)
   this->rtp_transport_controller_send_->EnablePeriodicAlrProbing(true);
 
-  this->process_timer_ = new UvTimer(this, uv_loop_->get_loop().get());
+  this->process_timer_ = new UvTimer(this, uv_loop_->get_loop());
 
   this->process_timer_->Start(std::min(
       // Depends on probation being done and WebRTC-Pacer-MinPacketLimitMs field

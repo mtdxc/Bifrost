@@ -16,8 +16,8 @@ const uint32_t DefaultInitRtt = 10u;
 const uint32_t MaxIntervalSendPacketRemove = 400u;  // 两个 feedback 来回的时间
 
 QuicSendAlgorithmAdapter::QuicSendAlgorithmAdapter(
-    UvLoop** uv_loop, quic::CongestionControlType congestion_type)
-    : uv_loop_(*uv_loop) {
+    UvLoop* uv_loop, quic::CongestionControlType congestion_type)
+    : uv_loop_(uv_loop) {
   this->clock_ = new QuicClockAdapter(uv_loop);
 
   this->rtt_stats_ = new quic::RttStats();

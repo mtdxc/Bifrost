@@ -18,12 +18,9 @@
 
 #include "bifrost/experiment_manager/experiment_data.h"
 #include "common.h"
-#include "uv_loop.h"
 #include "uv_timer.h"
 
 namespace bifrost {
-typedef std::shared_ptr<ExperimentDataProducerInterface>
-    ExperimentDataProducerInterfacePtr;
 
 class BifrostPacer : public UvTimer::Listener {
  public:
@@ -67,24 +64,30 @@ class BifrostPacer : public UvTimer::Listener {
     this->data_producer_->ChangeOutBitrate(pacing_rate_, interval);
     pre_pacing_update_time_ = this->uv_loop_->get_time_ms();
   }  // bps
+
   void set_pacing_congestion_windows(uint32_t congestion_windows) {
     pacing_congestion_windows_ = congestion_windows;
   }
+
   void set_bytes_in_flight(uint32_t bytes_in_flight) {
     bytes_in_flight_ = bytes_in_flight;
   }
+
   void set_pacing_transfer_time(uint32_t pacing_transfer_time) {
     pacing_transfer_time_ = pacing_transfer_time;
   }
+
   void NackReadyToSendPacket(RtpPacketPtr packet) {
     this->ready_send_vec_.emplace_back(
         std::pair<RtpPacketPtr, SendPacketType>(packet, NACK));
   }
+
   uint32_t get_pacing_packet_count() {
     auto tmp = pacing_packet_count_;
     pacing_packet_count_ = 0;
     return tmp;
   }
+  
   uint32_t get_pacing_bytes() { return pacing_bytes_; }
   uint32_t get_pacing_bitrate_bps() { return pacing_bitrate_bps_; }
 
@@ -100,7 +103,7 @@ class BifrostPacer : public UvTimer::Listener {
   Observer* observer_;
 
   // fake date
-  ExperimentDataProducerInterfacePtr data_producer_;
+  std::shared_ptr<ExperimentDataProducerInterface> data_producer_;
   uint16_t tcc_seq_{1u};
 
   // ready send

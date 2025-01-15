@@ -16,12 +16,12 @@ namespace bifrost {
 const uint32_t IntervalUpdatePacingInfo = 100u;
 const uint32_t IntervalSendReport = 2000u;
 
-Publisher::Publisher(Settings::Configuration& remote_config, UvLoop** uv_loop,
+Publisher::Publisher(Settings::Configuration& remote_config, UvLoop* uv_loop,
                      Observer* observer, uint8_t number,
                      ExperimentManagerPtr& experiment_manager,
                      quic::CongestionControlType congestion_type)
     : remote_addr_config_(remote_config),
-      uv_loop_(*uv_loop),
+      uv_loop_(uv_loop),
       observer_(observer),
       rtt_(20),
       experiment_manager_(experiment_manager),
@@ -33,14 +33,11 @@ Publisher::Publisher(Settings::Configuration& remote_config, UvLoop** uv_loop,
   this->udp_remote_address_ = std::make_shared<sockaddr>(remote_addr);
 
   // 3.timer start
-  this->send_report_timer_ =
-      new UvTimer(this, this->uv_loop_->get_loop().get());
+  this->send_report_timer_ = new UvTimer(this, this->uv_loop_->get_loop());
   this->send_report_timer_->Start(IntervalSendReport, IntervalSendReport);
 
-  this->update_pacing_info_timer_ =
-      new UvTimer(this, this->uv_loop_->get_loop().get());
-  this->update_pacing_info_timer_->Start(IntervalUpdatePacingInfo,
-                                         IntervalUpdatePacingInfo);
+  this->update_pacing_info_timer_ = new UvTimer(this, this->uv_loop_->get_loop());
+  this->update_pacing_info_timer_->Start(IntervalUpdatePacingInfo, IntervalUpdatePacingInfo);
 
   // 4.nack
   nack_ = std::make_shared<Nack>(remote_addr_config_.ssrc, uv_loop);
@@ -56,7 +53,7 @@ Publisher::Publisher(Settings::Configuration& remote_config, UvLoop** uv_loop,
 
   // 7.pacer
   pacer_ = std::make_shared<BifrostPacer>(
-      ssrc_, remote_addr_config_.flexfec_ssrc, *uv_loop, this);
+      ssrc_, remote_addr_config_.flexfec_ssrc, uv_loop, this);
 }
 
 void Publisher::OnReceiveRtcpFeedback(FeedbackRtpPacket* fb) {
@@ -161,8 +158,7 @@ SenderReport* Publisher::GetRtcpSenderReport(uint64_t nowMs) const {
 
   // Calculate TS difference between now and maxPacketMs.
   auto diffMs = nowMs - this->max_packet_ms_;
-  auto diffTs =
-      diffMs * 90000 / 1000;  // 现实中常用的采样换算此处写死 90000 - 视频
+  auto diffTs = diffMs * 90000 / 1000;  // 现实中常用的采样换算此处写死 90000 - 视频
 
   report->SetSsrc(this->ssrc_);
   report->SetPacketCount(this->send_packet_count_);
@@ -182,8 +178,7 @@ void Publisher::OnTimer(UvTimer* timer) {
     auto* report = GetRtcpSenderReport(now);
     packet->AddSenderReport(report);
     packet->Serialize(Buffer);
-    this->observer_->OnPublisherSendRtcpPacket(packet,
-                                               this->udp_remote_address_.get());
+    this->observer_->OnPublisherSendRtcpPacket(packet, this->udp_remote_address_.get());
   }
 
   if (timer == this->update_pacing_info_timer_) {

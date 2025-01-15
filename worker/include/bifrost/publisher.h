@@ -51,21 +51,18 @@ class Publisher : public UvTimer::Listener, public BifrostPacer::Observer {
     else
       this->nack_->OnSendRtpPacket(packet);
 
-    this->observer_->OnPublisherSendPacket(packet,
-                                           this->udp_remote_address_.get());
+    this->observer_->OnPublisherSendPacket(packet, udp_remote_address_.get());
   }
   void OnPublisherSendReTransPacket(RtpPacketPtr packet) override {
     // 发送算法需要记录发送内容
     this->bifrost_send_algorithm_manager_->OnRtpPacketSend(
         packet, this->uv_loop_->get_time_ms_int64());
 
-    this->observer_->OnPublisherSendPacket(packet,
-                                           this->udp_remote_address_.get());
+    this->observer_->OnPublisherSendPacket(packet, udp_remote_address_.get());
   }
 
   void OnPublisherSendRtcpPacket(CompoundPacketPtr packet) override {
-    this->observer_->OnPublisherSendRtcpPacket(packet,
-                                               this->udp_remote_address_.get());
+    this->observer_->OnPublisherSendRtcpPacket(packet, udp_remote_address_.get());
   }
 
  public:
@@ -76,7 +73,7 @@ class Publisher : public UvTimer::Listener, public BifrostPacer::Observer {
   SenderReport* GetRtcpSenderReport(uint64_t nowMs) const;
 
  public:
-  Publisher(Settings::Configuration& remote_config, UvLoop** uv_loop,
+  Publisher(Settings::Configuration& remote_config, UvLoop* uv_loop,
             Observer* observer, uint8_t number,
             ExperimentManagerPtr& experiment_manager,
             quic::CongestionControlType quic_congestion_type);

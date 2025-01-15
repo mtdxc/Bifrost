@@ -47,7 +47,7 @@ class Player : public UvTimer::Listener,
   };
 
  public:
-  Player(const struct sockaddr* remote_addr, UvLoop** uv_loop,
+  Player(const struct sockaddr* remote_addr, UvLoop* uv_loop,
          Observer* observer, uint32_t ssrc, uint8_t number,
          ExperimentManagerPtr& experiment_manager);
   ~Player() {

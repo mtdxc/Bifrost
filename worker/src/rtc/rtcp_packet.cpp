@@ -8,9 +8,6 @@
  *******************************************************/
 
 #include "rtcp_packet.h"
-
-#include <iostream>
-
 #include "rtcp_feedback.h"
 #include "rtcp_sr.h"
 #include "rtcp_rr.h"
@@ -23,8 +20,7 @@ uint8_t Buffer[BufferSize];
 /* Class variables. */
 
 // clang-format off
-std::map<Type, std::string> RtcpPacket::type2String =
-    {
+std::map<Type, std::string> RtcpPacket::type2String = {
     { Type::SR,    "SR"    },
     { Type::RR,    "RR"    },
     { Type::SDES,  "SDES"  },
@@ -34,7 +30,7 @@ std::map<Type, std::string> RtcpPacket::type2String =
     { Type::PSFB,  "PSFB"  },
     { Type::XR,    "XR"    },
     { Type::NAT,   "NAT"   }
-    };
+};
 // clang-format on
 
 /* Class methods. */
@@ -45,20 +41,15 @@ std::shared_ptr<RtcpPacket> RtcpPacket::Parse(const uint8_t* data, size_t len) {
 
   while (len > 0u) {
     if (!RtcpPacket::IsRtcp(data, len)) {
-      std::cout << "[rtcp packet] data is not a RTCP packet" << std::endl;
-      std::cout << "no rtcp:" << Byte::bytes_to_hex(data, len) << " no rtcp" << std::endl;
+      RTC_LOG(INFO) << "data is not a RTCP packet:" << Byte::bytes_to_hex(data, len);
       return nullptr;
     }
 
-    auto* header =
-        const_cast<CommonHeader*>(reinterpret_cast<const CommonHeader*>(data));
+    auto* header = reinterpret_cast<const CommonHeader*>(data);
     size_t packetLen = static_cast<size_t>(ntohs(header->length) + 1) * 4;
 
     if (len < packetLen) {
-      std::cout << "[rtcp packet] packet length exceeds remaining data [len:"
-                << len << ", "
-                << "packet len:" << packetLen << "]";
-
+      RTC_LOG(WARNING) << "packet length exceeds: len=" << len << ", " << "packet len=" << packetLen;
       return nullptr;
     }
 
@@ -103,8 +94,7 @@ std::shared_ptr<RtcpPacket> RtcpPacket::Parse(const uint8_t* data, size_t len) {
       }
 
       default: {
-        std::cout << "[rtcp packet] unknown RTCP packet type [packetType:"
-                  << header->packetType << "]" << std::endl;
+        RTC_LOG(WARNING) << "unknown RTCP type " << header->packetType;
       }
     }
 
@@ -116,8 +106,7 @@ std::shared_ptr<RtcpPacket> RtcpPacket::Parse(const uint8_t* data, size_t len) {
                                 FeedbackRtp::MessageType(header->count));
       }
 
-      std::cout << "[rtcp packet] error parsing " << packetType.c_str()
-                << " RtcpPacket" << std::endl;
+      RTC_LOG(WARNING) << packetType << " parsing error";
 
       return nullptr;
     }
@@ -131,12 +120,10 @@ std::shared_ptr<RtcpPacket> RtcpPacket::Parse(const uint8_t* data, size_t len) {
 
 const std::string& RtcpPacket::Type2String(Type type) {
   static const std::string Unknown("UNKNOWN");
-
   auto it = RtcpPacket::type2String.find(type);
-
-  if (it == RtcpPacket::type2String.end()) return Unknown;
-
-  return it->second;
+  if (it != RtcpPacket::type2String.end())
+    return it->second;
+  return Unknown;
 }
 
 /* Instance methods. */

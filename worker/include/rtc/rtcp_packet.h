@@ -55,21 +55,20 @@ class RtcpPacket {
 
  public:
   static bool IsRtcp(const uint8_t* data, size_t len) {
-    auto header =
-        const_cast<CommonHeader*>(reinterpret_cast<const CommonHeader*>(data));
+    auto header = reinterpret_cast<const CommonHeader*>(data);
 
     // clang-format off
-        return (
-            (len >= sizeof(CommonHeader)) &&
-            // DOC: https://tools.ietf.org/html/draft-ietf-avtcore-rfc5764-mux-fixes
-            (data[0] > 127 && data[0] < 192) &&
-            // RTP Version must be 2.
-            (header->version == 2) &&
-            // RTCP packet types defined by IANA:
-            // http://www.iana.org/assignments/rtp-parameters/rtp-parameters.xhtml#rtp-parameters-4
-            // RFC 5761 (RTCP-mux) states this range for secure RTCP/RTP detection.
-            (header->packetType >= 192 && header->packetType <= 223)
-            );
+    return (
+        (len >= sizeof(CommonHeader)) &&
+        // DOC: https://tools.ietf.org/html/draft-ietf-avtcore-rfc5764-mux-fixes
+        (data[0] > 127 && data[0] < 192) &&
+        // RTP Version must be 2.
+        (header->version == 2) &&
+        // RTCP packet types defined by IANA:
+        // http://www.iana.org/assignments/rtp-parameters/rtp-parameters.xhtml#rtp-parameters-4
+        // RFC 5761 (RTCP-mux) states this range for secure RTCP/RTP detection.
+        (header->packetType >= 192 && header->packetType <= 223)
+        );
     // clang-format on
   }
   static std::shared_ptr<RtcpPacket> Parse(const uint8_t* data, size_t len);
