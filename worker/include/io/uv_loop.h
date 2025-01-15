@@ -10,12 +10,10 @@
 #ifndef BIFROST_IO_UDP_H
 #define BIFROST_IO_UDP_H
 
-#include <uv.h>
-
+typedef struct uv_loop_s uv_loop_t;
 #include <memory>
 
 namespace bifrost {
-typedef std::shared_ptr<uv_loop_t> UvLoopTPtr;
 class UvLoop {
  public:
   void ClassInit();
@@ -26,13 +24,13 @@ class UvLoop {
  public:
   uv_loop_t* get_loop() { return this->loop_.get(); }
   uint32_t get_time_s() {
-    return static_cast<uint32_t>(uv_hrtime() / 1000000000u);
+    return get_time_ns() / 1000000000u;
   }
   uint64_t get_time_ms() {
-    return static_cast<uint64_t>(uv_hrtime() / 1000000u);
+    return get_time_ns() / 1000000u;
   }
-  uint64_t get_time_us() { return static_cast<uint64_t>(uv_hrtime() / 1000u); }
-  uint64_t get_time_ns() { return uv_hrtime(); }
+  uint64_t get_time_us() { return get_time_ns() / 1000u; }
+  uint64_t get_time_ns();
   // Used within libwebrtc dependency which uses int64_t values for time
   // representation.
   int64_t get_time_ms_int64() {
@@ -45,7 +43,7 @@ class UvLoop {
   }
 
  private:
-  UvLoopTPtr loop_;
+  std::shared_ptr<uv_loop_t> loop_;
 };
 }  // namespace bifrost
 

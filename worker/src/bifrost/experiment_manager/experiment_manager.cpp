@@ -20,11 +20,9 @@ const uint8_t DefaultCreateColumn = 5;
 // 默认落地间隔300ms一次
 const uint16_t DefaultDumpDataInterval = 200;
 
-ExperimentManager::ExperimentManager()
-    : cycle_trend_ms_fraction_(
-          1000 /
-          DefaultDumpDataInterval) /* 按秒周期计算 trend 时间戳，需要换算参数*/
-{
+ExperimentManager::ExperimentManager() {
+  /* 按秒周期计算 trend 时间戳，需要换算参数*/
+  this->cycle_trend_ms_fraction_ = 1000 / DefaultDumpDataInterval;
   // 1.初始化行列名
   this->gcc_data_file_.open("../data/gcc_data_file.csv",
                             std::ios::out | std::ios::trunc);
@@ -52,9 +50,9 @@ ExperimentManager::ExperimentManager()
 
   // 3.创建落地定时器
   this->dump_data_timer_ = new UvTimer(this, this->uv_loop_->get_loop());
-  this->dump_data_timer_->Start(DefaultDumpDataInterval,
-                                DefaultDumpDataInterval);
+  this->dump_data_timer_->Start(DefaultDumpDataInterval, DefaultDumpDataInterval);
 }
+
 ExperimentManager::~ExperimentManager() {
   delete uv_loop_;
   delete this->dump_data_timer_;

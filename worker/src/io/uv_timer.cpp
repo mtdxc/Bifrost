@@ -6,12 +6,11 @@
  * @file        : timer.cpp
  * @description : TODO
  *******************************************************/
-
+#include "uv_loop.h"
 #include "uv_timer.h"
-
+#include <uv.h>
 #include <iostream>
 
-#include "uv_loop.h"
 
 namespace bifrost {
 /* Static methods for UV callbacks. */
@@ -91,5 +90,9 @@ void UvTimer::Restart() {
 inline void UvTimer::OnUvTimer() {
   // Notify the listener.
   this->listener->OnTimer(this);
+}
+
+inline bool UvTimer::IsActive() const {
+  return uv_is_active(reinterpret_cast<uv_handle_t*>(this->uvHandle)) != 0;
 }
 }  // namespace bifrost

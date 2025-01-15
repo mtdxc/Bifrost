@@ -10,7 +10,7 @@
 #include "port_manager.h"
 
 #include <iostream>
-
+#include <uv.h>
 #include "setting.h"
 #include "utils.h"
 #include "uv_loop.h"
@@ -20,15 +20,12 @@ static inline void onClose(uv_handle_t* handle) { delete handle; }
 namespace bifrost {
 uv_handle_t* PortManager::BindPort(Settings::Configuration config,
                                    uv_loop_t* loop) {
-  std::cout << "[port manager] BindPort by config befor "
-            << config.rtcIp.c_str() << std::endl;
+  std::cout << "[port manager] BindPort by config befor " << config.rtcIp << std::endl;
   // First normalize the IP. This may throw if invalid IP.
   IP::NormalizeIp(config.rtcIp);
-  std::cout << "[port manager] BindPort by config after "
-            << config.rtcIp.c_str() << std::endl;
+  std::cout << "[port manager] BindPort by config after " << config.rtcIp << std::endl;
 
-  struct sockaddr_storage
-      bind_addr;  // NOLINT(cppcoreguidelines-pro-type-member-init)
+  struct sockaddr_storage bind_addr;
   uv_handle_t* uvHandle{nullptr};
   int err;
   int flags{0};
@@ -39,8 +36,7 @@ uv_handle_t* PortManager::BindPort(Settings::Configuration config,
                         reinterpret_cast<struct sockaddr_in*>(&bind_addr));
       std::cout << "[port manager] uv_ip4_addr" << std::endl;
       if (err != 0)
-        std::cout << "[port manager] uv_ip4_addr() failed: " << uv_strerror(err)
-                  << std::endl;
+        std::cout << "[port manager] uv_ip4_addr() failed: " << uv_strerror(err) << std::endl;
 
       break;
     }
@@ -50,8 +46,7 @@ uv_handle_t* PortManager::BindPort(Settings::Configuration config,
                         reinterpret_cast<struct sockaddr_in6*>(&bind_addr));
       std::cout << "[port manager] uv_ip6_addr" << std::endl;
       if (err != 0)
-        std::cout << "[port manager] uv_ip6_addr() failed: " << uv_strerror(err)
-                  << std::endl;
+        std::cout << "[port manager] uv_ip6_addr() failed: " << uv_strerror(err) << std::endl;
 
       // Don't also bind into IPv4 when listening in IPv6.
       // flags |= UV_UDP_IPV6ONLY;
@@ -96,41 +91,34 @@ uv_handle_t* PortManager::BindPort(uv_loop_t* loop) {
       << Settings::config_.local_receive_configuration_.rtcIp.c_str()
       << std::endl;
   // First normalize the IP. This may throw if invalid IP.
-  IP::NormalizeIp(
-      Settings::config_.local_receive_configuration_.rtcIp);
+  IP::NormalizeIp(Settings::config_.local_receive_configuration_.rtcIp);
   std::cout
       << "[port manager] BindPort after "
       << Settings::config_.local_receive_configuration_.rtcIp.c_str()
       << std::endl;
 
-  struct sockaddr_storage
-      bind_addr;  // NOLINT(cppcoreguidelines-pro-type-member-init)
+  struct sockaddr_storage bind_addr;
   uv_handle_t* uvHandle{nullptr};
   int err;
   int flags{0};
-  int family = IP::get_family(
-      Settings::config_.local_receive_configuration_.rtcIp);
+  int family = IP::get_family(Settings::config_.local_receive_configuration_.rtcIp);
   switch (family) {
     case AF_INET: {
-      err = uv_ip4_addr(Settings::config_.local_receive_configuration_
-                            .rtcIp.c_str(),
+      err = uv_ip4_addr(Settings::config_.local_receive_configuration_.rtcIp.c_str(),
                         0, reinterpret_cast<struct sockaddr_in*>(&bind_addr));
       std::cout << "[port manager] uv_ip4_addr" << std::endl;
       if (err != 0)
-        std::cout << "[port manager] uv_ip4_addr failed: " << uv_strerror(err)
-                  << std::endl;
+        std::cout << "[port manager] uv_ip4_addr failed: " << uv_strerror(err) << std::endl;
 
       break;
     }
 
     case AF_INET6: {
-      err = uv_ip6_addr(Settings::config_.local_receive_configuration_
-                            .rtcIp.c_str(),
+      err = uv_ip6_addr(Settings::config_.local_receive_configuration_.rtcIp.c_str(),
                         0, reinterpret_cast<struct sockaddr_in6*>(&bind_addr));
       std::cout << "[port manager] uv_ip6_addr" << std::endl;
       if (err != 0)
-        std::cout << "[port manager] uv_ip6_addr failed: " << uv_strerror(err)
-                  << std::endl;
+        std::cout << "[port manager] uv_ip6_addr failed: " << uv_strerror(err) << std::endl;
 
       // Don't also bind into IPv4 when listening in IPv6.
       // flags |= UV_UDP_IPV6ONLY;

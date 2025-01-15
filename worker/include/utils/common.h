@@ -35,7 +35,7 @@ typedef SSIZE_T ssize_t;
 #include <netinet/in.h>  // sockaddr_in, sockaddr_in6
 #include <sys/socket.h>  // struct sockaddr, struct sockaddr_storage, AF_INET, AF_INET6
 #endif
-
+#include "rtc_base/logging.h"
 // 使用默认端口模式
 //#define USING_DEFAULT_AF_CONFIG 1
 
@@ -48,7 +48,15 @@ typedef SSIZE_T ssize_t;
 #define PUBLISHER_CONFIG_FILE_PATH_STRING "../conf/config.json"
 #define LOCAL_DATA_FILE_PATH_STRING "../source/test.h264"
 
+typedef struct uv_loop_s uv_loop_t;
+typedef struct uv_handle_s uv_handle_t;
+typedef struct uv_timer_s uv_timer_t;
+typedef struct uv_tcp_s uv_tcp_t;
+typedef struct uv_udp_s uv_udp_t;
+typedef struct uv_buf_t uv_buf_t;
+
 namespace bifrost {
+class UvLoop;
 class RtpPacket;
 typedef std::shared_ptr<RtpPacket> RtpPacketPtr;
 class RtcpPacket;

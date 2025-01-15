@@ -8,7 +8,7 @@
  *******************************************************/
 
 #include "nack.h"
-
+#include "uv_loop.h"
 #include "player.h"
 #include "rtcp_nack.h"
 
@@ -51,10 +51,8 @@ void Nack::OnSendRtpPacket(RtpPacketPtr& rtp_packet) {
   item.packet = rtp_packet;
   item.sent_times = 0;
   item.sent_time_ms = ts;
-
-  this->max_send_ms_ = (max_send_ms_ > ts ? max_send_ms_ : ts);
-
   this->send_rtp_packet_map_[seq] = item;
+  this->max_send_ms_ = (max_send_ms_ > ts ? max_send_ms_ : ts);
 }
 
 void Nack::ReceiveNack(FeedbackRtpNackPacket* packet,
@@ -83,16 +81,12 @@ void Nack::FillRetransmissionContainer(uint16_t seq, uint16_t bitmask,
     if (requested) {
       auto iter = this->send_rtp_packet_map_.find(current_seq);
       if (iter != this->send_rtp_packet_map_.end()) {
-        uint32_t diff_ms;
-
         RtpPacketPtr packet = iter->second.packet;
-
-        diff_ms = this->max_send_ms_ - iter->second.sent_time_ms;
-
+        // 进行nack重传保护, 避免发太多nack包
+        uint32_t diff_ms = this->max_send_ms_ - iter->second.sent_time_ms;
         if (diff_ms > MaxRetransmissionDelay) {
           this->send_rtp_packet_map_.erase(iter);
-        } else if (now_ms - iter->second.sent_time_ms <=
-                   static_cast<uint64_t>(rtt / 4)) {
+        } else if (now_ms - iter->second.sent_time_ms <= static_cast<uint64_t>(rtt / 4)) {
           // do nothing
         } else {
           // Save when this packet was resent.
@@ -126,8 +120,6 @@ void Nack::OnNackGeneratorNack(const std::vector<uint16_t>& seqNumbers) {
 
   auto it = seqNumbers.begin();
   const auto end = seqNumbers.end();
-  size_t numPacketsRequested{0};
-
   while (it != end) {
     uint16_t seq;
     uint16_t bitmask{0};
@@ -144,11 +136,7 @@ void Nack::OnNackGeneratorNack(const std::vector<uint16_t>& seqNumbers) {
       ++it;
     }
 
-    auto* nackItem = new FeedbackRtpNackItem(seq, bitmask);
-
-    packet->AddItem(nackItem);
-
-    numPacketsRequested += nackItem->CountRequestedPackets();
+    packet->AddItem(new FeedbackRtpNackItem(seq, bitmask));
   }
 
   // Ensure that the RTCP packet fits into the RTCP buffer.
@@ -167,7 +155,6 @@ void Nack::OnReceiveRtpPacket(RtpPacketPtr rtp_packet) {
   if (!this->recv_started_) {
     this->recv_started_ = true;
     this->last_seq_ = seq;
-
     return;
   }
 
@@ -195,7 +182,6 @@ void Nack::OnReceiveRtpPacket(RtpPacketPtr rtp_packet) {
 void Nack::AddPacketsToNackList(uint16_t seq_start, uint16_t seq_end) {
   // Remove old packets.
   auto it = this->recv_nack_list_.lower_bound(seq_end - MaxPacketAge);
-
   this->recv_nack_list_.erase(this->recv_nack_list_.begin(), it);
 
   // If the nack list is too large, remove packets from the nack list until
@@ -212,8 +198,7 @@ void Nack::AddPacketsToNackList(uint16_t seq_start, uint16_t seq_end) {
 
   for (uint16_t seq = seq_start; seq != seq_end; ++seq) {
     if (this->recv_nack_list_.find(seq) == this->recv_nack_list_.end())
-      this->recv_nack_list_.emplace(
-          std::make_pair(seq, NackInfo{seq, seq, 0, 0}));
+      this->recv_nack_list_.emplace(std::make_pair(seq, NackInfo{seq, seq, 0, 0}));
   }
 }
 
@@ -227,7 +212,6 @@ std::vector<uint16_t> Nack::GetNackBatch() {
   std::vector<uint16_t> nack_batch;
 
   auto it = this->recv_nack_list_.begin();
-
   while (it != this->recv_nack_list_.end()) {
     NackInfo& nack_info = it->second;
     uint16_t seq = nack_info.seq;
@@ -265,8 +249,9 @@ std::vector<uint16_t> Nack::GetNackBatch() {
 void Nack::OnTimer(UvTimer* timer) {
   if (this->nack_timer_ == timer) {
     auto nack_batch = this->GetNackBatch();
-    if (nack_batch.empty()) return;
-    this->OnNackGeneratorNack(nack_batch);
+    if (nack_batch.size()) {
+      this->OnNackGeneratorNack(nack_batch);
+    }
   }
 }
 

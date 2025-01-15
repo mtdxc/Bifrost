@@ -10,10 +10,8 @@
 #ifndef WORKER_PORT_MANAGER_H
 #define WORKER_PORT_MANAGER_H
 
-#include <uv.h>
-
 #include <string>
-
+#include "common.h"
 #include "setting.h"
 
 namespace bifrost {

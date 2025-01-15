@@ -10,41 +10,16 @@
 #ifndef WORKER_UDP_SOCKET_H
 #define WORKER_UDP_SOCKET_H
 
-#include <uv.h>
-
 #include <functional>
 #include <string>
-
+#include "common.h"
 namespace bifrost {
 /* Static. */
 static constexpr size_t ReadBufferSize{65536};
 
 class UdpSocket {
- protected:
+ public:
   using onSendCallback = const std::function<void(bool sent)>;
-
- public:
-  /* Struct for the data field of uv_req_t when sending a datagram. */
-  struct UvSendData {
-    explicit UvSendData(size_t storeSize) {
-      this->store = new uint8_t[storeSize];
-    }
-
-    // Disable copy constructor because of the dynamically allocated data
-    // (store).
-    UvSendData(const UvSendData&) = delete;
-
-    ~UvSendData() {
-      delete[] this->store;
-      delete this->cb;
-    }
-
-    uv_udp_send_t req;
-    uint8_t* store{nullptr};
-    UdpSocket::onSendCallback* cb{nullptr};
-  };
-
- public:
   /**
    * uv_handle_ must be an already initialized and binded uv_udp_t pointer.
    */
@@ -57,13 +32,13 @@ class UdpSocket {
   void Close();
   virtual void Dump() const;
   void Send(const uint8_t* data, size_t len, const struct sockaddr* addr,
-            UdpSocket::onSendCallback* cb);
+            UdpSocket::onSendCallback* cb = nullptr);
+
   const struct sockaddr* GetLocalAddress() const {
     return reinterpret_cast<const struct sockaddr*>(&this->local_addr_);
   }
   int GetLocalFamily() const {
-    return reinterpret_cast<const struct sockaddr*>(&this->local_addr_)
-        ->sa_family;
+    return this->local_addr_.ss_family;
   }
   const std::string& GetLocalIp() const { return this->local_ip_; }
   uint16_t GetLocalPort() const { return this->local_port_; }

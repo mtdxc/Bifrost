@@ -15,7 +15,7 @@
 
 #include "common.h"
 #include "rtcp_nack.h"
-#include "uv_loop.h"
+//#include "uv_loop.h"
 #include "uv_timer.h"
 
 namespace bifrost {
@@ -25,8 +25,7 @@ class Nack : UvTimer::Listener {
   static constexpr uint16_t MaxValue = std::numeric_limits<uint16_t>::max();
   struct NackInfo {
     NackInfo() = default;
-    explicit NackInfo(uint16_t seq, uint16_t sendAtSeq, uint64_t ms,
-                      uint8_t time)
+    explicit NackInfo(uint16_t seq, uint16_t sendAtSeq, uint64_t ms, uint8_t time)
         : seq(seq), sent_time_ms(ms), retries(time) {}
 
     uint16_t seq{0u};

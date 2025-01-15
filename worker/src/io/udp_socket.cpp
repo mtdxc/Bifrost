@@ -8,13 +8,31 @@
  *******************************************************/
 
 #include "udp_socket.h"
-
+#include <uv.h>
 #include <iostream>
 
 #include "utils.h"
 
 namespace bifrost {
+/* Struct for the data field of uv_req_t when sending a datagram. */
+struct UvSendData {
+  explicit UvSendData(size_t storeSize) {
+    this->store = new uint8_t[storeSize];
+  }
 
+  // Disable copy constructor because of the dynamically allocated data
+  // (store).
+  UvSendData(const UvSendData&) = delete;
+
+  ~UvSendData() {
+    delete[] this->store;
+    delete this->cb;
+  }
+
+  uv_udp_send_t req;
+  uint8_t* store{nullptr};
+  UdpSocket::onSendCallback* cb{nullptr};
+};
 /* Static methods for UV callbacks. */
 
 inline static void onAlloc(uv_handle_t* handle, size_t suggested_size,
@@ -32,7 +50,7 @@ inline static void onRecv(uv_udp_t* handle, ssize_t nread, const uv_buf_t* buf,
 }
 
 inline static void onSend(uv_udp_send_t* req, int status) {
-  auto* sendData = static_cast<UdpSocket::UvSendData*>(req->data);
+  auto* sendData = static_cast<UvSendData*>(req->data);
   auto* handle = req->handle;
   auto* socket = static_cast<UdpSocket*>(handle->data);
   auto* cb = sendData->cb;

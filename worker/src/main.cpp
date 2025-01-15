@@ -27,8 +27,7 @@ int main() {
   std::string config_path(PUBLISHER_CONFIG_FILE_PATH_STRING);
   bifrost::Settings::AnalysisConfigurationFile(config_path);
 
-  bifrost::ExperimentManagerPtr ptr =
-      std::make_shared<bifrost::ExperimentManager>();
+  bifrost::ExperimentManagerPtr ptr = std::make_shared<bifrost::ExperimentManager>();
   std::thread experiment_runner(ThreadRunExperimentDataDump, ref(ptr));
 
   auto temp0 = std::make_shared<bifrost::Transport>(

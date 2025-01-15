@@ -10,8 +10,6 @@
 #ifndef WORKER_TIMER_H
 #define WORKER_TIMER_H
 
-#include <uv.h>
-
 #include "common.h"
 
 namespace bifrost {
@@ -39,9 +37,7 @@ class UvTimer {
   void Restart();
   uint64_t GetTimeout() const { return this->timeout; }
   uint64_t GetRepeat() const { return this->repeat; }
-  bool IsActive() const {
-    return uv_is_active(reinterpret_cast<uv_handle_t*>(this->uvHandle)) != 0;
-  }
+  bool IsActive() const;
 
   /* Callbacks fired by UV events. */
  public:

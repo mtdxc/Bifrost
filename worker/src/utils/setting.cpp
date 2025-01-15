@@ -8,7 +8,7 @@
  *******************************************************/
 
 #include "setting.h"
-
+#include <uv.h>
 #include <cctype>  // isprint()
 #include <fstream>
 #include <iostream>

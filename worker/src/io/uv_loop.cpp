@@ -8,7 +8,7 @@
  *******************************************************/
 
 #include "uv_loop.h"
-
+#include <uv.h>
 #include <iostream>
 
 namespace bifrost {
@@ -35,4 +35,6 @@ void UvLoop::PrintVersion() {
 }
 
 void UvLoop::RunLoop() { uv_run(this->loop_.get(), UV_RUN_DEFAULT); }
+
+uint64_t UvLoop::get_time_ns() { return uv_hrtime(); }
 }  // namespace bifrost
