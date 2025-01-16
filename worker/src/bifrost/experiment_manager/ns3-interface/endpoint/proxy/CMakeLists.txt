@@ -4,16 +4,8 @@ project(proxy)
 set(CMAKE_CXX_STANDARD 14)
 
 include_directories(.)
-include_directories(
-        io
-        libuv/docs/code/plugin
-        libuv/include
-        libuv/include/uv
-        libuv/src
-        libuv/src/unix
-)
-
-link_directories(libuv/build)
+include_directories(io)
+add_subdirectory(libuv)
 
 add_executable(proxy
         io/udp_socket.cpp
@@ -24,4 +16,4 @@ add_executable(proxy
         ns3_proxy.h
         rtc_header.h)
 
-target_link_libraries(proxy libuv.a pthread dl)
+target_link_libraries(proxy uv_a)

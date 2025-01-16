@@ -17,8 +17,7 @@ Ns3Proxy::Ns3Proxy() {}
 Ns3Proxy::~Ns3Proxy() {}
 
 bool Ns3Proxy::IsRtcp(const uint8_t* data, size_t len) {
-  auto header =
-      const_cast<RtcpHeader*>(reinterpret_cast<const RtcpHeader*>(data));
+  auto header = reinterpret_cast<const RtcpHeader*>(data);
 
   // clang-format off
   return (
@@ -38,9 +37,7 @@ bool Ns3Proxy::IsRtcp(const uint8_t* data, size_t len) {
 bool Ns3Proxy::IsRtp(const uint8_t* data, size_t len) {
   // NOTE: RtcpPacket::IsRtcp() must always be called before this method.
 
-  auto header =
-      const_cast<RtpHeader*>(reinterpret_cast<const RtpHeader*>(data));
-
+  auto header = reinterpret_cast<const RtpHeader*>(data);
   // clang-format off
   return (
       (len >= RtpHeaderSize) &&
@@ -53,32 +50,26 @@ bool Ns3Proxy::IsRtp(const uint8_t* data, size_t len) {
 }
 
 uint32_t Ns3Proxy::GetSsrcByData(const uint8_t* data, size_t len) {
-  auto header =
-      const_cast<RtcpHeader*>(reinterpret_cast<const RtcpHeader*>(data));
+  auto header = reinterpret_cast<const RtcpHeader*>(data);
   if (this->IsRtcp(data, len)) {
     switch (header->packetType) {
       // sr
       case 200: {
-        auto sr_header = const_cast<SRHeader*>(
-            reinterpret_cast<const SRHeader*>(data + sizeof(RtcpHeader)));
+        auto sr_header = reinterpret_cast<const SRHeader*>(data + sizeof(RtcpHeader));
         return sr_header->ssrc;
       }
       // rr
       case 201: {
-        auto rr_header = const_cast<RRHeader*>(
-            reinterpret_cast<const RRHeader*>(data + sizeof(RtcpHeader)));
+        auto rr_header = reinterpret_cast<const RRHeader*>(data + sizeof(RtcpHeader));
         return rr_header->ssrc;
       }
       case 205: {
-        auto fb_header = const_cast<FBHeader*>(
-            reinterpret_cast<const FBHeader*>(data + sizeof(RtcpHeader)));
+        auto fb_header = reinterpret_cast<const FBHeader*>(data + sizeof(RtcpHeader));
         return fb_header->media_ssrc;
       }
     }
   } else if (this->IsRtp(data, len)) {
-    auto header =
-        const_cast<RtpHeader*>(reinterpret_cast<const RtpHeader*>(data));
-
+    auto header = reinterpret_cast<const RtpHeader*>(data);
     return header->ssrc;
   }
 
@@ -112,15 +103,13 @@ ProxyManager::ProxyManager() {
   int family = UvRun::get_family("10.0.0.100");
   switch (family) {
     case AF_INET: {
-      err = uv_ip4_addr("10.0.0.100", 0,
-                        reinterpret_cast<struct sockaddr_in*>(&remote_addr));
+      auto addr = reinterpret_cast<struct sockaddr_in*>(&remote_addr);
+      err = uv_ip4_addr("10.0.0.100", 0, addr);
       std::cout << "[proxy] remote uv_ip4_addr" << std::endl;
       if (err != 0)
-        std::cout << "[proxy] remote uv_ip4_addr() failed: " << uv_strerror(err)
-        << std::endl;
+        std::cout << "[proxy] remote uv_ip4_addr() failed: " << uv_strerror(err) << std::endl;
 
-      (reinterpret_cast<struct sockaddr_in*>(&remote_addr))->sin_port =
-          htons(8889);
+      addr->sin_port = htons(8889);
       break;
     }
   }
@@ -136,11 +125,10 @@ ProxyManager::~ProxyManager() {
   }
 }
 
-void ProxyManager::ProxyInReceivePacket(uint32_t ssrc, const uint8_t* data,
-                                        size_t len,
+void ProxyManager::ProxyInReceivePacket(uint32_t ssrc, const uint8_t* data, size_t len,
                                         const struct sockaddr* addr) {
   if (ssrc == 0) return;
-  this->locker.lock();
+  std::unique_lock<decltype(locker)> l(locker);
   auto ite = ssrc_remote_map_.find(ssrc);
   if (ite == ssrc_remote_map_.end()) {
     // 存储对应目标端口
@@ -149,7 +137,6 @@ void ProxyManager::ProxyInReceivePacket(uint32_t ssrc, const uint8_t* data,
     this->ssrc_remote_map_[ssrc] = ssrc_addr;
   }
   this->proxy_out_->Send(data, len, this->proxy_addr_, nullptr);
-  this->locker.unlock();
 }
 
 void ProxyManager::ProxyOutReceivePacket(uint32_t ssrc, const uint8_t* data,
@@ -157,14 +144,13 @@ void ProxyManager::ProxyOutReceivePacket(uint32_t ssrc, const uint8_t* data,
                                          const struct sockaddr* addr) {
   if (ssrc == 0) return;
 
-  this->locker.lock();
+  std::unique_lock<decltype(locker)> l(locker);
   auto ite = ssrc_remote_map_.find(ssrc);
   if (ite != ssrc_remote_map_.end()) {
     this->proxy_in_->Send(data, len, ite->second, nullptr);
   } else {
     std::cout << "ssrc:" << ssrc << std::endl;
   }
-  this->locker.unlock();
 
 }
 

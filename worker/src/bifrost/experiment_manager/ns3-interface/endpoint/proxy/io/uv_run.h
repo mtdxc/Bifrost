@@ -38,42 +38,26 @@ class UvRun {
 
     switch (addr->sa_family) {
       case AF_INET: {
-        err = uv_inet_ntop(
-            AF_INET,
-            std::addressof(
-                reinterpret_cast<const struct sockaddr_in*>(addr)->sin_addr),
-                    ipBuffer, sizeof(ipBuffer));
-
+        auto paddr = reinterpret_cast<const struct sockaddr_in*>(addr);
+        err = uv_inet_ntop(AF_INET, &paddr->sin_addr, ipBuffer, sizeof(ipBuffer));
         if (err)
-          std::cout << "[proxy] uv_inet_ntop() failed: " << uv_strerror(err)
-          << std::endl;
-
-        port = static_cast<uint16_t>(
-            ntohs(reinterpret_cast<const struct sockaddr_in*>(addr)->sin_port));
-
+          std::cout << "[proxy] uv_inet_ntop() failed: " << uv_strerror(err) << std::endl;
+        port = ntohs(paddr->sin_port);
         break;
       }
 
       case AF_INET6: {
-        err = uv_inet_ntop(
-            AF_INET6,
-            std::addressof(
-                reinterpret_cast<const struct sockaddr_in6*>(addr)->sin6_addr),
-                    ipBuffer, sizeof(ipBuffer));
-
+        auto paddr = reinterpret_cast<const struct sockaddr_in6*>(addr);
+        err = uv_inet_ntop(AF_INET6, &paddr->sin6_addr, ipBuffer, sizeof(ipBuffer));
         if (err)
-          std::cout << "[proxy] uv_inet_ntop() failed: " << uv_strerror(err)
-          << std::endl;
+          std::cout << "[proxy] uv_inet_ntop() failed: " << uv_strerror(err) << std::endl;
 
-        port = static_cast<uint16_t>(
-            ntohs(reinterpret_cast<const struct sockaddr_in6*>(addr)->sin6_port));
-
+        port = ntohs(paddr->sin6_port);
         break;
       }
 
       default: {
-        std::cout << "[proxy] unknown network family: "
-        << static_cast<int>(addr->sa_family) << std::endl;
+        std::cout << "[proxy] unknown network family: " << static_cast<int>(addr->sa_family) << std::endl;
       }
     }
 
@@ -88,18 +72,14 @@ class UvRun {
 
     switch (get_family(ip)) {
       case AF_INET: {
-        err = uv_ip4_addr(ip.c_str(), 0,
-                          reinterpret_cast<struct sockaddr_in*>(&addrStorage));
-
+        auto addr = reinterpret_cast<struct sockaddr_in*>(&addrStorage);
+        err = uv_ip4_addr(ip.c_str(), 0, addr);
         if (err != 0) {
           std::cout << "[proxy] uv_ip4_addr() failed [ip:'" << ip.c_str()
                     << "']: " << uv_strerror(err) << std::endl;
         }
 
-        err = uv_ip4_name(reinterpret_cast<const struct sockaddr_in*>(
-                              std::addressof(addrStorage)),
-                          ipBuffer, sizeof(ipBuffer));
-
+        err = uv_ip4_name(addr, ipBuffer, sizeof(ipBuffer));
         if (err != 0) {
           std::cout << "[proxy] uv_ipv4_name() failed [ip:'" << ip.c_str()
                     << "']: %s" << uv_strerror(err) << std::endl;
@@ -111,18 +91,14 @@ class UvRun {
       }
 
       case AF_INET6: {
-        err = uv_ip6_addr(ip.c_str(), 0,
-                          reinterpret_cast<struct sockaddr_in6*>(&addrStorage));
-
+        auto addr = reinterpret_cast<struct sockaddr_in6*>(&addrStorage);
+        err = uv_ip6_addr(ip.c_str(), 0, addr);
         if (err != 0) {
           std::cout << "[proxy] uv_ip6_addr() failed [ip:'" << ip.c_str()
                     << "']: %s" << uv_strerror(err) << std::endl;
         }
 
-        err = uv_ip6_name(reinterpret_cast<const struct sockaddr_in6*>(
-                              std::addressof(addrStorage)),
-                          ipBuffer, sizeof(ipBuffer));
-
+        err = uv_ip6_name(addr, ipBuffer, sizeof(ipBuffer));
         if (err != 0) {
           std::cout << "[proxy] uv_ipv6_name() failed [ip:'" << ip.c_str()
                     << "']: %s" << uv_strerror(err) << std::endl;
@@ -145,27 +121,26 @@ class UvRun {
     NormalizeIp(ip);
     std::cout << "[proxy] BindPort by config after " << ip.c_str() << std::endl;
 
-    struct sockaddr_storage
-        bind_addr;  // NOLINT(cppcoreguidelines-pro-type-member-init)
+    struct sockaddr_storage bind_addr;
     uv_handle_t* uvHandle{nullptr};
     int err;
     int flags{0};
     int family = get_family(ip);
     switch (family) {
       case AF_INET: {
-        err = uv_ip4_addr(ip.c_str(), 0,
-                          reinterpret_cast<struct sockaddr_in*>(&bind_addr));
+        auto addr = reinterpret_cast<struct sockaddr_in*>(&bind_addr);
+        err = uv_ip4_addr(ip.c_str(), 0, addr);
         std::cout << "[proxy] uv_ip4_addr" << std::endl;
         if (err != 0)
           std::cout << "[proxy] uv_ip4_addr() failed: " << uv_strerror(err)
                     << std::endl;
-
+        addr->sin_port = htons(port);
         break;
       }
 
       case AF_INET6: {
-        err = uv_ip6_addr(ip.c_str(), 0,
-                          reinterpret_cast<struct sockaddr_in6*>(&bind_addr));
+        auto addr = reinterpret_cast<struct sockaddr_in6*>(&bind_addr);
+        err = uv_ip6_addr(ip.c_str(), 0, addr);
         std::cout << "[proxy] uv_ip6_addr" << std::endl;
         if (err != 0)
           std::cout << "[proxy] uv_ip6_addr() failed: " << uv_strerror(err)
@@ -173,30 +148,14 @@ class UvRun {
 
         // Don't also bind into IPv4 when listening in IPv6.
         // flags |= UV_UDP_IPV6ONLY;
-
+        addr->sin6_port = htons(port);
         break;
       }
 
       // This cannot happen.
       default: {
         std::cout << "[proxy] unknown IP family" << std::endl;
-        std::cout << "[proxy] unknown IP family" << std::endl;
       }
-    }
-
-    // Set the chosen port into the sockaddr struct.
-    switch (family) {
-      case AF_INET:
-        std::cout << "[proxy] unknown AF_INET" << std::endl;
-        (reinterpret_cast<struct sockaddr_in*>(&bind_addr))->sin_port =
-            htons(port);
-        break;
-
-      case AF_INET6:
-        std::cout << "[proxy] unknown AF_INET6" << std::endl;
-        (reinterpret_cast<struct sockaddr_in6*>(&bind_addr))->sin6_port =
-            htons(port);
-        break;
     }
 
     uvHandle = reinterpret_cast<uv_handle_t*>(new uv_udp_t());

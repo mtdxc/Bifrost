@@ -37,8 +37,7 @@ class ProxyIn : public UdpSocket, public Ns3Proxy {
  public:
   class ProxyInObserver {
    public:
-    virtual void ProxyInReceivePacket(uint32_t ssrc, const uint8_t* data,
-                                      size_t len,
+    virtual void ProxyInReceivePacket(uint32_t ssrc, const uint8_t* data, size_t len,
                                       const struct sockaddr* addr) = 0;
   };
 
@@ -46,8 +45,7 @@ class ProxyIn : public UdpSocket, public Ns3Proxy {
   ProxyIn(std::string& ip, uint16_t port,
           ProxyInObserver *observer, uv_loop_t* loop)
       : observer_(observer),
-        UdpSocket(
-            reinterpret_cast<uv_udp_t*>(UvRun::BindPort(ip, port, loop))) {}
+        UdpSocket(reinterpret_cast<uv_udp_t*>(UvRun::BindPort(ip, port, loop))) {}
 
   ~ProxyIn() {}
 
@@ -64,8 +62,7 @@ class ProxyOut : public UdpSocket, public Ns3Proxy {
  public:
   class ProxyOutObserver {
    public:
-    virtual void ProxyOutReceivePacket(uint32_t ssrc, const uint8_t* data,
-                                       size_t len,
+    virtual void ProxyOutReceivePacket(uint32_t ssrc, const uint8_t* data, size_t len,
                                        const struct sockaddr* addr) = 0;
   };
 
@@ -73,8 +70,7 @@ class ProxyOut : public UdpSocket, public Ns3Proxy {
   ProxyOut(std::string& ip, uint16_t port,
            ProxyOutObserver *observer, uv_loop_t* loop)
       : observer_(observer),
-        UdpSocket(
-            reinterpret_cast<uv_udp_t*>(UvRun::BindPort(ip, port, loop))) {}
+        UdpSocket(reinterpret_cast<uv_udp_t*>(UvRun::BindPort(ip, port, loop))) {}
 
   ~ProxyOut() {}
 
