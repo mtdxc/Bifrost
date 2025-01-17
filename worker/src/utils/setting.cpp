@@ -49,8 +49,7 @@ void Settings::SetConfiguration(int argc, char* argv[]) {
   opterr = 0;  // Don't allow getopt to print error messages.
   while ((c = getopt_long_only(argc, argv, "", options, &optionIdx)) != -1) {
     if (!optarg)
-      std::cout << "[setting] unknown configuration parameter: " << optarg
-                << std::endl;
+      RTC_LOG(WARNING) << "unknown configuration parameter: " << optarg;
 
     switch (c) {
       case 'P': {
@@ -58,7 +57,7 @@ void Settings::SetConfiguration(int argc, char* argv[]) {
           Settings::config_.local_receive_configuration_.rtcPort =
               static_cast<uint16_t>(std::stoi(optarg));
         } catch (const std::exception& error) {
-          std::cout << "[setting] %s" << error.what() << std::endl;
+          RTC_LOG(WARNING) << "%s" << error.what();
         }
 
         break;
@@ -70,7 +69,7 @@ void Settings::SetConfiguration(int argc, char* argv[]) {
           Settings::config_.local_receive_configuration_.rtcIp =
               stringValue;
         } catch (const std::exception& error) {
-          std::cout << "[setting] %s" << error.what() << std::endl;
+          RTC_LOG(WARNING) << "%s" << error.what();
         }
 
         break;
@@ -78,7 +77,7 @@ void Settings::SetConfiguration(int argc, char* argv[]) {
 
       // This should never happen.
       default: {
-        std::cout << "[setting] 'default' should never happen" << std::endl;
+        RTC_LOG(WARNING) << "'default' should never happen";
       }
     }
   }
@@ -99,8 +98,7 @@ sockaddr Settings::get_sockaddr_by_config(Configuration& publish_config) {
                         reinterpret_cast<struct sockaddr_in*>(&remote_addr));
 
       if (err != 0)
-        std::cout << "[setting] uv_ip4_addr() failed: " << uv_strerror(err)
-                  << std::endl;
+        RTC_LOG(WARNING) << "uv_ip4_addr() failed: " << uv_strerror(err);
 
       break;
     }
@@ -110,14 +108,13 @@ sockaddr Settings::get_sockaddr_by_config(Configuration& publish_config) {
                         reinterpret_cast<struct sockaddr_in6*>(&remote_addr));
 
       if (err != 0)
-        std::cout << "[setting] uv_ip6_addr() failed: " << uv_strerror(err)
-                  << std::endl;
+        RTC_LOG(WARNING) << "uv_ip6_addr() failed: " << uv_strerror(err);
 
       break;
     }
 
     default: {
-      std::cout << "[setting] invalid IP " << ip.c_str() << std::endl;
+      RTC_LOG(WARNING) << "invalid IP " << ip.c_str();
     }
   }
 
@@ -129,8 +126,7 @@ void Settings::PrintConfiguration() {}
 void Settings::ReadExperimentConfiguration(json& config) {
   auto gcc_iter = config.find("GccExperiment");
   if (gcc_iter == config.end()) {
-    std::cout << "[setting] read experiment configuration gcc experiment"
-              << std::endl;
+    RTC_LOG(WARNING) << "read experiment configuration gcc experiment";
   } else {
     auto tlws = gcc_iter->find("TrendLineWindowSize");
     gcc_experiment_config_.TrendLineWindowSize = tlws->get<uint32_t>();
@@ -150,7 +146,7 @@ void Settings::AnalysisConfigurationFile(std::string& config_path) {
 
   auto local_receive_iter = config.find("LocalReceiveConfigs");
   if (local_receive_iter == config.end()) {
-    std::cout << "[setting] server publish_config can not find";
+    RTC_LOG(WARNING) << "server publish_config can not find";
   } else {
     std::string ip;
     std::string name;
@@ -159,7 +155,7 @@ void Settings::AnalysisConfigurationFile(std::string& config_path) {
     // name
     auto local_name_iter = local_receive_iter->find("userName");
     if (local_name_iter == local_receive_iter->end()) {
-      std::cout << "[setting] server publish_config can not find name";
+      RTC_LOG(WARNING) << "server publish_config can not find name";
     } else {
       name = local_name_iter->get<std::string>();
     }
@@ -167,7 +163,7 @@ void Settings::AnalysisConfigurationFile(std::string& config_path) {
     // ip
     auto local_ip_iter = local_receive_iter->find("rtcIp");
     if (local_ip_iter == local_receive_iter->end()) {
-      std::cout << "[setting] server publish_config can not find ip";
+      RTC_LOG(WARNING) << "server publish_config can not find ip";
     } else {
       ip = local_ip_iter->get<std::string>();
     }
@@ -175,7 +171,7 @@ void Settings::AnalysisConfigurationFile(std::string& config_path) {
     // port
     auto local_port_iter = local_receive_iter->find("rtcPort");
     if (local_port_iter == local_receive_iter->end()) {
-      std::cout << "[setting] server publish_config can not find port";
+      RTC_LOG(WARNING) << "server publish_config can not find port";
     } else {
       port = local_port_iter->get<uint16_t>();
     }
@@ -183,7 +179,7 @@ void Settings::AnalysisConfigurationFile(std::string& config_path) {
     // ssrc
     auto local_ssrc_iter = local_receive_iter->find("ssrc");
     if (local_ssrc_iter == local_receive_iter->end()) {
-      std::cout << "[setting] server publish_config can not find ssrc" << std::endl;
+      RTC_LOG(WARNING) << "server publish_config can not find ssrc";
     } else {
       ssrc = local_ssrc_iter->get<uint32_t>();
     }
@@ -194,7 +190,7 @@ void Settings::AnalysisConfigurationFile(std::string& config_path) {
 
   auto remote_send_iter = config.find("RemoteSendConfigs");
   if (remote_send_iter == config.end()) {
-    std::cout << "[setting] server publish_config can not find";
+    RTC_LOG(WARNING) << "server publish_config can not find";
   } else {
     std::string ip;
     std::string name;
@@ -203,7 +199,7 @@ void Settings::AnalysisConfigurationFile(std::string& config_path) {
     // name
     auto remote_name_iter = remote_send_iter->find("userName");
     if (remote_name_iter == remote_send_iter->end()) {
-      std::cout << "[setting] server publish_config can not find name";
+      RTC_LOG(WARNING) << "server publish_config can not find name";
     } else {
       name = remote_name_iter->get<std::string>();
     }
@@ -211,7 +207,7 @@ void Settings::AnalysisConfigurationFile(std::string& config_path) {
     // ip
     auto remote_ip_iter = remote_send_iter->find("rtcIp");
     if (remote_ip_iter == remote_send_iter->end()) {
-      std::cout << "[setting] server publish_config can not find ip";
+      RTC_LOG(WARNING) << "server publish_config can not find ip";
     } else {
       ip = remote_ip_iter->get<std::string>();
     }
@@ -219,7 +215,7 @@ void Settings::AnalysisConfigurationFile(std::string& config_path) {
     // port
     auto remote_port_iter = remote_send_iter->find("rtcPort");
     if (remote_port_iter == remote_send_iter->end()) {
-      std::cout << "[setting] server publish_config can not find port";
+      RTC_LOG(WARNING) << "server publish_config can not find port";
     } else {
       port = remote_port_iter->get<uint16_t>();
     }
@@ -227,7 +223,7 @@ void Settings::AnalysisConfigurationFile(std::string& config_path) {
     // ssrc
     auto remote_ssrc_iter = remote_send_iter->find("ssrc");
     if (remote_ssrc_iter == remote_send_iter->end()) {
-      std::cout << "[setting] server publish_config can not find ssrc" << std::endl;
+      RTC_LOG(WARNING) << "server publish_config can not find ssrc";
     } else {
       ssrc = remote_ssrc_iter->get<uint32_t>();
     }

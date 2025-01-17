@@ -21,29 +21,29 @@ BifrostSendAlgorithmManager::BifrostSendAlgorithmManager(
     case quic::kBBR:
     case quic::kPCC:
     case quic::kBBRv2:
-      this->algorithm_interface_ = std::make_shared<QuicSendAlgorithmAdapter>(uv_loop, congestion_algorithm_type);
+      algorithm_interface_ = std::make_shared<QuicSendAlgorithmAdapter>(uv_loop, congestion_algorithm_type);
       break;
     case quic::kGoogCC:
-      this->algorithm_interface_ = std::make_shared<TransportCongestionControlClient>(
+      algorithm_interface_ = std::make_shared<TransportCongestionControlClient>(
           this, InitialAvailableGccBitrate, uv_loop);
       break;
   }
 }
 
 void BifrostSendAlgorithmManager::OnRtpPacketSend(RtpPacketPtr &rtp_packet, int64_t nowMs) {
-  this->algorithm_interface_->OnRtpPacketSend(rtp_packet, nowMs);
+  algorithm_interface_->OnRtpPacketSend(rtp_packet, nowMs);
 }
 
 bool BifrostSendAlgorithmManager::OnReceiveRtcpFeedback(FeedbackRtpPacket* fb) {
-  return this->algorithm_interface_->OnReceiveRtcpFeedback(fb);
+  return algorithm_interface_->OnReceiveRtcpFeedback(fb);
 }
 
 void BifrostSendAlgorithmManager::OnReceiveReceiverReport(webrtc::RTCPReportBlock report,
                                                                  float rtt, int64_t nowMs) {
-  this->algorithm_interface_->OnReceiveReceiverReport(report, rtt, nowMs);
+  algorithm_interface_->OnReceiveReceiverReport(report, rtt, nowMs);
 }
 
 void BifrostSendAlgorithmManager::UpdateRtt(float rtt) {
-  this->algorithm_interface_->UpdateRtt(rtt);
+  algorithm_interface_->UpdateRtt(rtt);
 }
 }  // namespace bifrost

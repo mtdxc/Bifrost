@@ -15,14 +15,13 @@
 #include "bifrost_send_algorithm/webrtc_clock_adapter.h"
 #include "experiment_manager/fake_data_producer.h"
 #include "experiment_manager/h264_file_data_producer.h"
-
+using namespace webrtc::media_optimization;
 namespace bifrost {
 
 constexpr uint16_t DefaultCreatePacketTimeInterval = 10u;  // 每10ms创建10个包
 constexpr uint16_t DefaultStatisticsTimerInterval = 1000u;  // 每1s统计一次
 constexpr uint16_t DefaultPacingTimeInterval = 5u;
-const uint32_t InitialPacingGccBitrate =
-    200000u;  // 配合当前测试的码率一半左右开始探测 780
+const uint32_t InitialPacingGccBitrate = 200000u;  // 配合当前测试的码率一半左右开始探测 780
 
 uint32_t BifrostPacer::MaxPacingDataLimit = 4096000;
 
@@ -63,9 +62,7 @@ BifrostPacer::BifrostPacer(uint32_t ssrc, uint32_t flexfec_ssrc,
   flexfec_sender_ = std::make_unique<webrtc::FlexfecSender>(
       110, flexfec_ssrc, ssrc, "", vec_ext, size, nullptr, clock_);
 
-  loss_prot_logic_ =
-      std::make_unique<webrtc::media_optimization::VCMLossProtectionLogic>(
-          clock_->TimeInMilliseconds());
+  loss_prot_logic_ = std::make_unique<VCMLossProtectionLogic>(clock_->TimeInMilliseconds());
 
   // 开启保护模式，nack+fec
   this->SetProtectionMethod(true, true);
@@ -80,14 +77,13 @@ BifrostPacer::~BifrostPacer() {
 }
 
 void BifrostPacer::SetProtectionMethod(bool enable_fec, bool enable_nack) {
-  webrtc::media_optimization::VCMProtectionMethodEnum method(
-      webrtc::media_optimization::kNone);
+  VCMProtectionMethodEnum method(kNone);
   if (enable_fec && enable_nack) {
-    method = webrtc::media_optimization::kNackFec;
+    method = kNackFec;
   } else if (enable_nack) {
-    method = webrtc::media_optimization::kNack;
+    method = kNack;
   } else if (enable_fec) {
-    method = webrtc::media_optimization::kFec;
+    method = kFec;
   }
 
   loss_prot_logic_->SetMethod(method);
@@ -96,8 +92,7 @@ void BifrostPacer::SetProtectionMethod(bool enable_fec, bool enable_nack) {
 void BifrostPacer::UpdateFecRates(uint8_t fraction_lost,
                                   int64_t round_trip_time_ms) {
 #ifdef USE_FLEX_FEC_PROTECT
-  float target_bitrate_kbps =
-      static_cast<float>(this->target_bitrate_) / 1000.f;
+  float target_bitrate_kbps = static_cast<float>(this->target_bitrate_) / 1000.f;
 
   // Sanity check.
   if (this->last_pacing_frame_rate_ < 1.0) {
@@ -114,13 +109,12 @@ void BifrostPacer::UpdateFecRates(uint8_t fraction_lost,
     // The filtered loss may be the received loss (no filter), or some
     // filtered value (average or max window filter).
     // Use max window filter for now.
-    webrtc::media_optimization::FilterPacketLossMode filter_mode =
-        webrtc::media_optimization::kMaxFilter;
+    FilterPacketLossMode filter_mode = kMaxFilter;
     uint8_t packet_loss_enc = loss_prot_logic_->FilteredLoss(
         clock_->TimeInMilliseconds(), filter_mode, fraction_lost);
     // For now use the filtered loss for computing the robustness settings.
     loss_prot_logic_->UpdateFilteredLossPr(packet_loss_enc);
-    if (loss_prot_logic_->SelectedType() == webrtc::media_optimization::kNone) {
+    if (loss_prot_logic_->SelectedType() == kNone) {
       return;
     }
     // Update method will compute the robustness settings for the given
@@ -131,17 +125,14 @@ void BifrostPacer::UpdateFecRates(uint8_t fraction_lost,
     // overhead data actually transmitted (including headers) the last
     // second.
     // Get the FEC code rate for Key frames (set to 0 when NA).
-    key_fec_params_.fec_rate =
-        loss_prot_logic_->SelectedMethod()->RequiredProtectionFactorK();
+    auto method = loss_prot_logic_->SelectedMethod();
+    key_fec_params_.fec_rate = method->RequiredProtectionFactorK();
     // Get the FEC code rate for Delta frames (set to 0 when NA).
-    delta_fec_params_.fec_rate =
-        loss_prot_logic_->SelectedMethod()->RequiredProtectionFactorD();
+    delta_fec_params_.fec_rate = method->RequiredProtectionFactorD();
     // The RTP module currently requires the same |max_fec_frames| for both
     // key and delta frames.
-    delta_fec_params_.max_fec_frames =
-        loss_prot_logic_->SelectedMethod()->MaxFramesFec();
-    key_fec_params_.max_fec_frames =
-        loss_prot_logic_->SelectedMethod()->MaxFramesFec();
+    delta_fec_params_.max_fec_frames = method->MaxFramesFec();
+    key_fec_params_.max_fec_frames = method->MaxFramesFec();
   }
   // Set the FEC packet mask type. |kFecMaskBursty| is more effective for
   // consecutive losses and little/no packet re-ordering. As we currently
@@ -153,32 +144,28 @@ void BifrostPacer::UpdateFecRates(uint8_t fraction_lost,
   // 随便设置一个
   if (flexfec_sender_) {
     flexfec_sender_->SetFecParameters(delta_fec_params_);
-    std::cout << "fec rate:" << delta_fec_params_.fec_rate
+    RTC_LOG(INFO) << "fec rate:" << delta_fec_params_.fec_rate
               << ", max frame rate:" << delta_fec_params_.max_fec_frames
-              << ", fraction lost:" << uint32_t(fraction_lost) << std::endl;
+              << ", fraction lost:" << uint32_t(fraction_lost);
   }
 #endif
 }
 
 void BifrostPacer::TryFlexFecPacketSend(RtpPacketPtr& packet) {
   if (flexfec_sender_ && loss_prot_logic_ && clock_ &&
-      packet->GetSsrc() == this->flexfec_sender_->protected_media_ssrc()) {
+      packet->GetSsrc() == flexfec_sender_->protected_media_ssrc()) {
     webrtc::RtpPacketToSend webrtc_packet(nullptr);
-
-    if (!webrtc_packet.Parse(packet->GetData(), packet->GetSize())) return;
+    if (!webrtc_packet.Parse(packet->GetData(), packet->GetSize())) 
+      return;
 
     flexfec_sender_->AddRtpPacketAndGenerateFec(webrtc_packet);
     auto vec_s = flexfec_sender_->GetFecPackets();
-
-    if (!vec_s.empty()) {
-      for (auto iter = vec_s.begin(); iter != vec_s.end(); iter++) {
-        (*iter)->SetExtension<webrtc::TransportSequenceNumber>(0);
-        RtpPacketPtr rtp_packet =
-            std::make_shared<RtpPacket>((*iter)->data(), (*iter)->size());
-
-        this->ready_send_vec_.emplace_back(
-            std::pair<RtpPacketPtr, SendPacketType>(rtp_packet, FEC));
-      }
+    if (vec_s.empty()) 
+      return;
+    for (auto iter = vec_s.begin(); iter != vec_s.end(); iter++) {
+      (*iter)->SetExtension<webrtc::TransportSequenceNumber>(0);
+      RtpPacketPtr rtp_packet = std::make_shared<RtpPacket>((*iter)->data(), (*iter)->size());
+      this->ready_send_vec_.emplace_back(std::make_pair(rtp_packet, FEC));
     }
   }
 }
@@ -193,24 +180,23 @@ void BifrostPacer::OnTimer(UvTimer* timer) {
       
       // gcc 的pacing
       // 2.5则是根据码率浮动的，这里如果没有使用真实的h264文件发数据，可以改小
-      double pacing_gain =
-          (this->pacing_congestion_windows_ > 0 && this->bytes_in_flight_ > 0
-               ? 1.5
-               : 2.5);
+      double pacing_gain = 2.5;
+      if (this->pacing_congestion_windows_ > 0 && this->bytes_in_flight_ > 0)
+        pacing_gain = 1.5;
 
-      int32_t interval_pacing_bytes =
-          int32_t((pacing_rate_ * pacing_gain /* 最大浮动值2.5 */ /
-                   1000) /* 转换ms */
+      int32_t interval_pacing_bytes = pre_remainder_bytes_ + /* 上个周期剩余bytes */
+          int32_t((pacing_rate_ * pacing_gain / 1000) /* 转换ms */
                   * pacer_timer_interval_ /* 该间隔发送速率 */ /
-                  8 /* 转换bytes */) +
-          pre_remainder_bytes_ /* 上个周期剩余bytes */;
+                  8 /* 转换bytes */);
 
       auto ite = ready_send_vec_.begin();
       while (ite != ready_send_vec_.end() && interval_pacing_bytes > 0) {
         auto pair = (*ite);
         auto packet = pair.first;
         if (packet == nullptr) {
-          std::cout << "[pacer send] packet is nullptr" << std::endl;
+          RTC_LOG(WARNING) << "[pacer send] packet is nullptr";
+          ite = ready_send_vec_.erase(ite);
+          continue;
         }
         // 发送时更新tcc拓展序号，nack的rtp和普通rtp序号是连续的
         if (packet->UpdateTransportWideCc01(this->tcc_seq_)) {
@@ -252,7 +238,7 @@ void BifrostPacer::OnTimer(UvTimer* timer) {
     delta_fec_params_.fec_rate = 255;
     delta_fec_params_.max_fec_frames = 1;
 #ifdef USE_FLEX_FEC_PROTECT
-    flexfec_sender_->SetFecParameters(delta_fec_params_);
+    flexfec_sender_->SetFecParameters(delta_fec_params_);                                                        
 #endif
     // 每10ms产生3次
     for (int i = 0; i < 5; i++) {
@@ -261,8 +247,7 @@ void BifrostPacer::OnTimer(UvTimer* timer) {
 #ifdef USE_FLEX_FEC_PROTECT
       this->TryFlexFecPacketSend(packet);
 #endif
-      this->ready_send_vec_.emplace_back(
-          std::pair<RtpPacketPtr, SendPacketType>(packet, RTP));
+      this->ready_send_vec_.emplace_back(std::make_pair(packet, RTP));
     }
   }
 

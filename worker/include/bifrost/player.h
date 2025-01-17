@@ -32,8 +32,7 @@
 namespace bifrost {
 typedef std::shared_ptr<sockaddr> SockAddressPtr;
 typedef std::shared_ptr<Nack> NackPtr;
-typedef std::shared_ptr<TransportCongestionControlServer>
-    TransportCongestionControlServerPtr;
+typedef std::shared_ptr<TransportCongestionControlServer> TransportCongestionControlServerPtr;
 class Player : public UvTimer::Listener,
                public TransportCongestionControlServer::Observer,
                public webrtc::RecoveredPacketReceiver,
@@ -149,9 +148,7 @@ class Player : public UvTimer::Listener,
 
 #ifdef USE_VCM_PACKET_BUFFER
   rtc::scoped_refptr<webrtc::video_coding::PacketBuffer> packet_buffer_;
-  std::unique_ptr<webrtc::video_coding::RtpFrameReferenceFinder>
-      reference_finder_;
-
+  std::unique_ptr<webrtc::video_coding::RtpFrameReferenceFinder> reference_finder_;
   std::map<int64_t, uint16_t> last_seq_num_for_pic_id_;
 #endif
 

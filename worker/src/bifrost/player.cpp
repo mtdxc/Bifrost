@@ -88,15 +88,13 @@ Player::Player(const struct sockaddr* remote_addr, UvLoop* uv_loop,
 #ifdef USE_VCM_PACKET_BUFFER
   packet_buffer_ = webrtc::video_coding::PacketBuffer::Create(
       clock_, kPacketBufferStartSize, kPacketBufferMaxSize, this);
-  reference_finder_ =
-      std::make_unique<webrtc::video_coding::RtpFrameReferenceFinder>(this);
+  reference_finder_ = std::make_unique<webrtc::video_coding::RtpFrameReferenceFinder>(this);
 #endif
   // 7.depacketizer
   depacketizer_ = new webrtc::RtpDepacketizerH264();
 
   // 8.fec receiver
-  flexfec_receiver_ =
-      std::make_unique<webrtc::FlexfecReceiver>(ssrc + 1, ssrc, this);
+  flexfec_receiver_ = std::make_unique<webrtc::FlexfecReceiver>(ssrc + 1, ssrc, this);
 }
 
 void Player::OnAssembledFrame(
@@ -112,16 +110,10 @@ void Player::OnAssembledFrame(
 
 void Player::OnCompleteFrame(
     std::unique_ptr<webrtc::video_coding::EncodedFrame> frame) {
-  time_t currentTime = time(nullptr);
-  struct tm* localTime = localtime(&currentTime);
-  std::cout << "[" << localTime->tm_hour << ":" << localTime->tm_min << ":"
-            << localTime->tm_sec << "]"
-            << "reference finder OnCompleteFrame frame interval to decode:"
+  RTC_LOG(INFO) << "reference finder OnCompleteFrame frame interval to decode:"
             << frame->id.picture_id << ", interval:"
-            << this->uv_loop_->get_time_ms_int64() - pre_decode_time_
-            << std::endl;
-
-  pre_decode_time_ = this->uv_loop_->get_time_ms_int64();
+            << uv_loop_->get_time_ms_int64() - pre_decode_time_;
+  pre_decode_time_ = uv_loop_->get_time_ms_int64();
 }
 
 bool Player::UpdateSeq(uint16_t seq) {
@@ -152,7 +144,6 @@ bool Player::UpdateSeq(uint16_t seq) {
       this->bad_seq_ = RtpSeqMod + 1;  // So seq == badSeq is false.
     } else {
       this->bad_seq_ = (seq + 1) & (RtpSeqMod - 1);
-
       return false;
     }
   }
@@ -167,9 +158,7 @@ bool Player::UpdateSeq(uint16_t seq) {
 void Player::OnRecoveredPacket(const uint8_t* packet, size_t length) {
   auto recover_packet = std::make_shared<RtpPacket>(packet, length);
   if (!recover_packet) {
-    std::cout << "recive rtp packet fec recover packet data is not a valid RTP "
-                 "packet length:"
-              << length << std::endl;
+    RTC_LOG(WARNING) << "recive rtp packet fec recover packet data is not a valid RTP length:" << length;
     return;
   }
 
@@ -194,8 +183,7 @@ void Player::OnReceiveRtpPacket(RtpPacketPtr packet, bool is_recover) {
 
     if (is_fec_packet) {
       if (fec_nack_ == nullptr) {
-        fec_nack_ =
-            std::make_shared<Nack>(packet->GetSsrc(), this->uv_loop_, this);
+        fec_nack_ = std::make_shared<Nack>(packet->GetSsrc(), this->uv_loop_, this);
       }
       fec_nack_->OnReceiveRtpPacket(packet);
       return;
@@ -204,10 +192,8 @@ void Player::OnReceiveRtpPacket(RtpPacketPtr packet, bool is_recover) {
 
   this->UpdateSeq(packet->GetSequenceNumber());
   this->nack_->OnReceiveRtpPacket(packet);
-  this->tcc_server_->IncomingPacket(this->uv_loop_->get_time_ms_int64(),
-                                    packet.get());
-  this->tcc_server_->QuicCountIncomingPacket(
-      this->uv_loop_->get_time_ms_int64(), packet.get());
+  this->tcc_server_->IncomingPacket(uv_loop_->get_time_ms_int64(), packet.get());
+  this->tcc_server_->QuicCountIncomingPacket(uv_loop_->get_time_ms_int64(), packet.get());
 
   webrtc::RtpDepacketizer::ParsedPayload parsed_payload;
   if (!depacketizer_->Parse(&parsed_payload, parsed_packet.payload().data(),
@@ -219,33 +205,25 @@ void Player::OnReceiveRtpPacket(RtpPacketPtr packet, bool is_recover) {
   webrtc::RTPHeader header;
   parsed_packet.GetHeader(&header);
   parsed_payload.video_header().is_last_packet_in_frame |= header.markerBit;
-#ifdef USE_VCM_RECEIVER
   // 转vcm包
-  const webrtc::VCMPacket vcm_packet(
+  webrtc::VCMPacket vcm_packet(
       const_cast<uint8_t*>(parsed_packet.payload().data()),
-      parsed_packet.payload_size(), header, parsed_payload.video_header(),
+      parsed_packet.payload_size(), 
+      header, 
+      parsed_payload.video_header(),
       /*ntp_estimator_.Estimate(header.timestamp)*/ 0,
       clock_->TimeInMilliseconds());
-
-  //  std::cout << Byte::bytes_to_hex(parsed_packet.payload().data(),
-  //                                  parsed_packet.payload().size())
-  //            << std::endl;
-
-  auto ret = this->receiver_->InsertPacket(vcm_packet);
+#if defined(USE_VCM_RECEIVER)
+  //  RTC_LOG(LS_VERBOSE) << Byte::bytes_to_hex(parsed_packet.payload().data(),
+  //                                  parsed_packet.payload().size());
+  auto ret = receiver_->InsertPacket(vcm_packet);
   if (ret == /*VCM_FLUSH_INDICATOR*/ 4) {
     drop_frames_until_keyframe_ = true;
   }
 #endif
-
 #ifdef USE_VCM_PACKET_BUFFER
   // 转vcm包
-  webrtc::VCMPacket vcm_packet(
-      const_cast<uint8_t*>(parsed_packet.payload().data()),
-      parsed_packet.payload_size(), header, parsed_payload.video_header(),
-      /*ntp_estimator_.Estimate(header.timestamp)*/ 0,
-      clock_->TimeInMilliseconds());
-
-  if (this->packet_buffer_->InsertPacket(&vcm_packet)) {
+  if (packet_buffer_->InsertPacket(&vcm_packet)) {
   }
 #endif
 }
@@ -262,8 +240,7 @@ void Player::OnReceiveSenderReport(SenderReport* report) {
   this->last_sr_timestamp_ += report->GetNtpFrac() >> 16;
 
   // Update info about last Sender Report.
-  Time::Ntp ntp;  // NOLINT(cppcoreguidelines-pro-type-member-init)
-
+  Time::Ntp ntp;
   ntp.seconds = report->GetNtpSec();
   ntp.fractions = report->GetNtpFrac();
 
@@ -291,8 +268,7 @@ ReceiverReport* Player::GetRtcpReceiverReport() {
 
   this->expected_prior_ = expected;
 
-  uint32_t receivedInterval =
-      this->receive_packet_count_ - this->received_prior_;
+  uint32_t receivedInterval = this->receive_packet_count_ - this->received_prior_;
 
   this->received_prior_ = this->receive_packet_count_;
 
@@ -300,8 +276,7 @@ ReceiverReport* Player::GetRtcpReceiverReport() {
 
   uint8_t fraction_lost = 0;
   if (expectedInterval != 0 && lostInterval > 0)
-    fraction_lost =
-        std::round((static_cast<double>(lostInterval << 8) / expectedInterval));
+    fraction_lost = std::round((static_cast<double>(lostInterval << 8) / expectedInterval));
 
   report->SetTotalLost(packet_lost_);
   report->SetFractionLost(fraction_lost);
@@ -322,7 +297,6 @@ ReceiverReport* Player::GetRtcpReceiverReport() {
                                          this->last_sr_received_);
     // Express delay in units of 1/65536 seconds.
     uint32_t dlsr = (delayMs / 1000) << 16;
-
     dlsr |= uint32_t{(delayMs % 1000) * 65536 / 1000};
 
     report->SetDelaySinceLastSenderReport(dlsr);
@@ -338,21 +312,14 @@ void Player::OnTimer(UvTimer* timer) {
   if (timer == decoder_timer_) {
 #ifdef USE_VCM_RECEIVER
     bool prefer_late_decoding = true;
-    webrtc::VCMEncodedFrame* frame =
-        this->receiver_->FrameForDecoding(kMaxWaitTime, prefer_late_decoding_);
-
+    webrtc::VCMEncodedFrame* frame = receiver_->FrameForDecoding(kMaxWaitTime, prefer_late_decoding_);
     if (!frame) return;
 
     time_t currentTime = time(nullptr);
     struct tm* localTime = localtime(&currentTime);
 
-    std::cout << "[" << localTime->tm_hour << ":" << localTime->tm_min << ":"
-              << localTime->tm_sec << "]"
-              << "frame interval to decode:"
-              << this->uv_loop_->get_time_ms_int64() - pre_decode_time_
-              << std::endl;
-
-    pre_decode_time_ = this->uv_loop_->get_time_ms_int64();
+    RTC_LOG(INFO) << "frame interval to decode:" << uv_loop_->get_time_ms_int64() - pre_decode_time_;
+    pre_decode_time_ = uv_loop_->get_time_ms_int64();
 
     bool drop_frame = false;
     {

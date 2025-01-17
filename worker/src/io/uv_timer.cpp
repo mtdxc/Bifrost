@@ -55,14 +55,14 @@ void UvTimer::Start(uint64_t timeout, uint64_t repeat) {
 
   int err = uv_timer_start(this->uvHandle, static_cast<uv_timer_cb>(onTimer),
                            timeout, repeat);
-  if (err != 0) std::cout << "[timer] uv timer start err" << std::endl;
+  if (err != 0) RTC_LOG(WARNING) << "uv timer start err " << err;
 }
 
 void UvTimer::Stop() {
   if (this->closed) return;
 
   int err = uv_timer_stop(this->uvHandle);
-  if (err != 0) std::cout << "[timer] uv timer stop err" << std::endl;
+  if (err != 0) RTC_LOG(WARNING) << "uv timer stop err " << err;
 }
 
 void UvTimer::Reset() {
@@ -74,7 +74,7 @@ void UvTimer::Reset() {
 
   int err = uv_timer_start(this->uvHandle, static_cast<uv_timer_cb>(onTimer),
                            this->repeat, this->repeat);
-  if (err != 0) std::cout << "[timer] uv timer reset start err" << std::endl;
+  if (err != 0) RTC_LOG(WARNING) << "uv timer reset start err " << err;;
 }
 
 void UvTimer::Restart() {
@@ -84,7 +84,7 @@ void UvTimer::Restart() {
 
   int err = uv_timer_start(this->uvHandle, static_cast<uv_timer_cb>(onTimer),
                            this->timeout, this->repeat);
-  if (err != 0) std::cout << "[timer] uv timer restart err" << std::endl;
+  if (err != 0) RTC_LOG(WARNING) << "uv timer restart err " << err;;
 }
 
 inline void UvTimer::OnUvTimer() {

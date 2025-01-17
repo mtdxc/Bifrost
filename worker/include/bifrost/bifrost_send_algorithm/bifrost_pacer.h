@@ -78,8 +78,7 @@ class BifrostPacer : public UvTimer::Listener {
   }
 
   void NackReadyToSendPacket(RtpPacketPtr packet) {
-    this->ready_send_vec_.emplace_back(
-        std::pair<RtpPacketPtr, SendPacketType>(packet, NACK));
+    this->ready_send_vec_.emplace_back(std::make_pair(packet, NACK));
   }
 
   uint32_t get_pacing_packet_count() {

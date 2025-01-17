@@ -118,8 +118,7 @@ RtpPacketPtr FakeDataProducer::CreateData() {
   // 使用webrtc中rtp包初始化方式
 
   webrtc::RtpHeaderExtensionMap webrtcExtension;
-  webrtcExtension.RegisterByType(
-      7, webrtc::RTPExtensionType::kRtpExtensionTransportSequenceNumber);
+  webrtcExtension.RegisterByType(7, webrtc::RTPExtensionType::kRtpExtensionTransportSequenceNumber);
 
   webrtc::RtpPacketToSend send_packet(
       &webrtcExtension, sizeof(kPacketWithH264) + RtpPacket::HeaderSize + 8);
@@ -136,10 +135,7 @@ RtpPacketPtr FakeDataProducer::CreateData() {
   send_packet.SetPayloadSize(sizeof(kPacketWithH264));
 
   // 转回 rtp packet
-  auto rtp_packet =
-      std::make_shared<RtpPacket>(send_packet.data(), send_packet.capacity());
-
-  return rtp_packet;
+  return std::make_shared<RtpPacket>(send_packet.data(), send_packet.capacity());
 }
 
 }  // namespace bifrost

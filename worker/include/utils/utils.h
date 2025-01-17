@@ -50,23 +50,15 @@ class IP {
     // Compare IP.
     switch (addr1->sa_family) {
       case AF_INET: {
-        return (reinterpret_cast<const struct sockaddr_in*>(addr1)
-                    ->sin_addr.s_addr ==
-                reinterpret_cast<const struct sockaddr_in*>(addr2)
-                    ->sin_addr.s_addr);
+        return (reinterpret_cast<const struct sockaddr_in*>(addr1)->sin_addr.s_addr
+             == reinterpret_cast<const struct sockaddr_in*>(addr2)->sin_addr.s_addr);
       }
 
       case AF_INET6: {
-        return (
-            std::memcmp(std::addressof(
-                            reinterpret_cast<const struct sockaddr_in6*>(addr1)
-                                ->sin6_addr),
-                        std::addressof(
-                            reinterpret_cast<const struct sockaddr_in6*>(addr2)
-                                ->sin6_addr),
-                        16) == 0
-                ? true
-                : false);
+        return 0 == std::memcmp(
+          std::addressof(reinterpret_cast<const struct sockaddr_in6*>(addr1)->sin6_addr),
+          std::addressof(reinterpret_cast<const struct sockaddr_in6*>(addr2)->sin6_addr),
+          16);
       }
 
       default: {
@@ -77,16 +69,13 @@ class IP {
 
   static struct sockaddr_storage CopyAddress(const struct sockaddr* addr) {
     struct sockaddr_storage copiedAddr;
-
     switch (addr->sa_family) {
       case AF_INET:
-        std::memcpy(std::addressof(copiedAddr), addr,
-                    sizeof(struct sockaddr_in));
+        std::memcpy(&copiedAddr, addr, sizeof(struct sockaddr_in));
         break;
 
       case AF_INET6:
-        std::memcpy(std::addressof(copiedAddr), addr,
-                    sizeof(struct sockaddr_in6));
+        std::memcpy(&copiedAddr, addr, sizeof(struct sockaddr_in6));
         break;
     }
 
@@ -258,7 +247,7 @@ class String {
 
   static uint8_t* Base64Decode(const std::string& str, size_t& outLen);
 
-  static std::vector<std::string> Split(std::string s, std::string seperator);
+  //static std::vector<std::string> Split(std::string s, std::string seperator);
 
   static std::string get_now_str_s();
 };
@@ -276,22 +265,16 @@ class Time {
   };
 
   static Time::Ntp TimeMs2Ntp(uint64_t ms) {
-    Time::Ntp ntp;  // NOLINT(cppcoreguidelines-pro-type-member-init)
-
+    Time::Ntp ntp;
     ntp.seconds = ms / 1000;
     ntp.fractions = static_cast<uint32_t>(
         (static_cast<double>(ms % 1000) / 1000) * NtpFractionalUnit);
-
     return ntp;
   }
 
   static uint64_t Ntp2TimeMs(Time::Ntp ntp) {
-    // clang-format off
-        return (
-            static_cast<uint64_t>(ntp.seconds) * 1000 +
-            static_cast<uint64_t>(std::round((static_cast<double>(ntp.fractions) * 1000) / NtpFractionalUnit))
-            );
-    // clang-format on
+    return static_cast<uint64_t>(ntp.seconds) * 1000 +
+           static_cast<uint64_t>(std::round((static_cast<double>(ntp.fractions) * 1000) / NtpFractionalUnit));
   }
 
   static bool IsNewerTimestamp(uint32_t timestamp, uint32_t prevTimestamp) {

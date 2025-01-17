@@ -42,21 +42,18 @@ class Transport : public UdpRouter::UdpRouterObServer,
   // Publisher
   void OnPublisherSendPacket(RtpPacketPtr packet,
                              const struct sockaddr* remote_addr) override {
-    this->udp_router_->Send(packet->GetData(), packet->GetSize(), remote_addr,
-                            nullptr);
+    udp_router_->Send(packet->GetData(), packet->GetSize(), remote_addr);
   }
 
   void OnPublisherSendRtcpPacket(CompoundPacketPtr packet,
                                  const struct sockaddr* remote_addr) override {
-    this->udp_router_->Send(packet->GetData(), packet->GetSize(), remote_addr,
-                            nullptr);
+    udp_router_->Send(packet->GetData(), packet->GetSize(), remote_addr);
   }
 
   // Player
   void OnPlayerSendPacket(RtcpPacketPtr packet,
                           const struct sockaddr* remote_addr) override {
-    this->udp_router_->Send(packet->GetData(), packet->GetSize(), remote_addr,
-                            nullptr);
+    udp_router_->Send(packet->GetData(), packet->GetSize(), remote_addr);
   }
 
   // UdpRouterObServer

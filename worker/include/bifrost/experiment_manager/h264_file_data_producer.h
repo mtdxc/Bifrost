@@ -74,7 +74,6 @@ class H264FileDataProducer : public ExperimentDataProducerInterface,
   // UvLoop
   UvLoop *uv_loop_ = nullptr;
 
-  std::ifstream h264_data_file_;
   uint8_t *buffer_ = nullptr;
   size_t size_ = 0;
   int frame_count_ = 0;  // 帧数

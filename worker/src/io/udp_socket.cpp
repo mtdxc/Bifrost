@@ -38,14 +38,12 @@ struct UvSendData {
 inline static void onAlloc(uv_handle_t* handle, size_t suggested_size,
                            uv_buf_t* buf) {
   auto* socket = static_cast<UdpSocket*>(handle->data);
-
   if (socket) socket->OnUvRecvAlloc(suggested_size, buf);
 }
 
 inline static void onRecv(uv_udp_t* handle, ssize_t nread, const uv_buf_t* buf,
                           const struct sockaddr* addr, unsigned int flags) {
   auto* socket = static_cast<UdpSocket*>(handle->data);
-
   if (socket) socket->OnUvRecv(nread, buf, addr, flags);
 }
 
@@ -67,19 +65,16 @@ inline static void onClose(uv_handle_t* handle) { delete handle; }
 
 // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
 UdpSocket::UdpSocket(uv_udp_t* uv_handle_) : uv_handle_(uv_handle_) {
-  int err;
-
   this->uv_handle_->data = static_cast<void*>(this);
 
-  err = uv_udp_recv_start(this->uv_handle_, static_cast<uv_alloc_cb>(onAlloc),
-                          static_cast<uv_udp_recv_cb>(onRecv));
-
+  int err = uv_udp_recv_start(this->uv_handle_, 
+                              static_cast<uv_alloc_cb>(onAlloc),
+                              static_cast<uv_udp_recv_cb>(onRecv));
   if (err != 0) {
     uv_close(reinterpret_cast<uv_handle_t*>(this->uv_handle_),
              static_cast<uv_close_cb>(onClose));
 
-    std::cout << "[udp_socket] uv_udp_recv_start failed: " << uv_strerror(err)
-              << std::endl;
+    RTC_LOG(WARNING) << "uv_udp_recv_start failed: " << uv_strerror(err);
   }
 
   // Set local address.
@@ -87,7 +82,7 @@ UdpSocket::UdpSocket(uv_udp_t* uv_handle_) : uv_handle_(uv_handle_) {
     uv_close(reinterpret_cast<uv_handle_t*>(this->uv_handle_),
              static_cast<uv_close_cb>(onClose));
 
-    std::cout << "[udp_socket] error setting local IP and port" << std::endl;
+    RTC_LOG(WARNING) << "error setting local IP and port";
   }
 }
 
@@ -105,24 +100,19 @@ void UdpSocket::Close() {
 
   // Don't read more.
   int err = uv_udp_recv_stop(this->uv_handle_);
-
   if (err != 0)
-    std::cout << "[udp_socket] uv_udp_recv_stop failed: " << uv_strerror(err)
-              << std::endl;
+    RTC_LOG(WARNING) << "uv_udp_recv_stop failed: " << uv_strerror(err);
 
   uv_close(reinterpret_cast<uv_handle_t*>(this->uv_handle_),
            static_cast<uv_close_cb>(onClose));
 }
 
 void UdpSocket::Dump() const {
-  std::cout << "[udp_socket] <UdpSocket>" << std::endl;
-  std::cout << "[udp_socket]   localIp   : " << this->local_ip_.c_str()
-            << std::endl;
-  std::cout << "[udp_socket]   localPort : "
-            << static_cast<uint16_t>(this->local_port_) << std::endl;
-  std::cout << "[udp_socket]   closed_    : "
-            << (!this->closed_ ? "open" : "closed_") << std::endl;
-  std::cout << "[udp_socket] </UdpSocket>" << std::endl;
+  RTC_LOG(INFO) << "<UdpSocket>";
+  RTC_LOG(INFO) << "   localIp   : " << this->local_ip_;
+  RTC_LOG(INFO) << "   localPort : " << this->local_port_;
+  RTC_LOG(INFO) << "   closed_    : " << (!this->closed_ ? "open" : "closed_");
+  RTC_LOG(INFO) << "</UdpSocket>";
 }
 
 void UdpSocket::Send(const uint8_t* data, size_t len,
@@ -130,21 +120,18 @@ void UdpSocket::Send(const uint8_t* data, size_t len,
                      UdpSocket::onSendCallback* cb) {
   if (this->closed_) {
     if (cb) (*cb)(false);
-
     return;
   }
 
   if (len == 0) {
     if (cb) (*cb)(false);
-
     return;
   }
 
   // First try uv_udp_try_send(). In case it can not directly send the datagram
   // then build a uv_req_t and use uv_udp_send().
 
-  uv_buf_t buffer =
-      uv_buf_init(reinterpret_cast<char*>(const_cast<uint8_t*>(data)), len);
+  uv_buf_t buffer = uv_buf_init((char*)data, len);
   int sent = uv_udp_try_send(this->uv_handle_, &buffer, 1, addr);
 
   // Entire datagram was sent. Done.
@@ -154,22 +141,18 @@ void UdpSocket::Send(const uint8_t* data, size_t len,
 
     if (cb) {
       (*cb)(true);
-
       delete cb;
     }
 
     return;
   } else if (sent >= 0) {
-    //    std::cout << "[udp_socket] datagram truncated just " << sent << " of
-    //    bytes "
-    //              << len << " were sent" << std::endl;
+    // RTC_LOG(WARNING) << "datagram truncated just " << sent << " of bytes " << len << " were sent";
 
     // Update sent bytes.
     this->sent_bytes_ += sent;
 
     if (cb) {
       (*cb)(false);
-
       delete cb;
     }
 
@@ -177,8 +160,7 @@ void UdpSocket::Send(const uint8_t* data, size_t len,
   }
   // Any error but legit EAGAIN. Use uv_udp_send().
   else if (sent != UV_EAGAIN) {
-    std::cout << "[udp_socket] uv_udp_try_send failed, trying uv_udp_send(): "
-              << uv_strerror(sent) << std::endl;
+    RTC_LOG(WARNING) << "uv_udp_try_send failed " << uv_strerror(sent);
     return;
   }
 
@@ -192,12 +174,10 @@ void UdpSocket::Send(const uint8_t* data, size_t len,
 
   int err = uv_udp_send(&sendData->req, this->uv_handle_, &buffer, 1, addr,
                         static_cast<uv_udp_send_cb>(onSend));
-
   if (err != 0) {
     // NOTE: uv_udp_send() returns error if a wrong INET family is given
     // (IPv6 destination on a IPv4 binded socket), so be ready.
-    std::cout << "[udp_socket] uv_udp_send failed: " << uv_strerror(err)
-              << std::endl;
+    RTC_LOG(WARNING) << "uv_udp_send failed: " << uv_strerror(err);
 
     if (cb) (*cb)(false);
 
@@ -210,25 +190,16 @@ void UdpSocket::Send(const uint8_t* data, size_t len,
 }
 
 bool UdpSocket::SetLocalAddress() {
-  int err;
   int len = sizeof(this->local_addr_);
-
-  err = uv_udp_getsockname(
-      this->uv_handle_, reinterpret_cast<struct sockaddr*>(&this->local_addr_),
-      &len);
-
+  auto addr = reinterpret_cast<struct sockaddr*>(&this->local_addr_);
+  int err = uv_udp_getsockname(uv_handle_, addr, &len);
   if (err != 0) {
-    std::cout << "[udp_socket] uv_udp_getsockname failed: " << uv_strerror(err)
-              << std::endl;
-
+    RTC_LOG(WARNING) << "uv_udp_getsockname failed: " << uv_strerror(err);
     return false;
   }
 
   int family;
-
-  IP::get_address_info(
-      reinterpret_cast<const struct sockaddr*>(&this->local_addr_), family,
-      this->local_ip_, this->local_port_);
+  IP::get_address_info(addr, family, this->local_ip_, this->local_port_);
 
   return true;
 }
@@ -248,11 +219,7 @@ inline void UdpSocket::OnUvRecv(ssize_t nread, const uv_buf_t* buf,
 
   // Check flags.
   if ((flags & UV_UDP_PARTIAL) != 0u) {
-    std::cout << "[udp_socket] received datagram was truncated due to "
-                 "insufficient buffer, ignoring "
-                 "it"
-              << std::endl;
-
+    RTC_LOG(INFO) << "received datagram was truncated due to insufficient buffer, ignoring it";
     return;
   }
 
@@ -262,12 +229,11 @@ inline void UdpSocket::OnUvRecv(ssize_t nread, const uv_buf_t* buf,
     this->recv_bytes_ += nread;
 
     // Notify the subclass.
-    UserOnUdpDatagramReceived(reinterpret_cast<uint8_t*>(buf->base), nread,
-                              addr);
+    UserOnUdpDatagramReceived(reinterpret_cast<uint8_t*>(buf->base), nread, addr);
   }
   // Some error.
   else {
-    std::cout << "[udp_socket] read error: " << uv_strerror(nread) << std::endl;
+    RTC_LOG(WARNING) << "read error: " << uv_strerror(nread);
   }
 }
 
@@ -276,7 +242,7 @@ inline void UdpSocket::OnUvSend(int status, UdpSocket::onSendCallback* cb) {
     if (cb) (*cb)(true);
   } else {
 #if MS_LOG_DEV_LEVEL == 3
-    MS_DEBUG_DEV("send error: %s", uv_strerror(status));
+    RTC_LOG(INFO) << "send error: " << uv_strerror(status);
 #endif
 
     if (cb) (*cb)(false);

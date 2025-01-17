@@ -16,6 +16,7 @@
 #include "udp_socket.h"
 
 namespace bifrost {
+// 接收udp包，区分rtp和rtcp包，后回调UdpRouterObServer
 class UdpRouter : public UdpSocket {
  public:
   class UdpRouterObServer {

@@ -31,7 +31,7 @@ Transport::Transport(TransportModel model, uint8_t number,
                      ExperimentManagerPtr& experiment_manager,
                      quic::CongestionControlType quic_congestion_type)
     : model_(model), number_(number), experiment_manager_(experiment_manager) {
-  std::cout << "now use model:" << ModelStr(model) << " you can change this model in main.cpp!" << std::endl;
+  RTC_LOG(LS_INFO) << "now use model:" << ModelStr(model) << " you can change this model in main.cpp!";
 
   this->uv_loop_ = new UvLoop;
 
@@ -95,7 +95,7 @@ void Transport::OnUdpRouterRtpPacketReceived(
                                              this->experiment_manager_);
       this->players_[rtp_packet->GetSsrc()] = player;
       player->OnReceiveRtpPacket(rtp_packet, false);
-    } else {
+    } else { // 约定fec的pt为110?
       auto fec_player_iter = this->players_.find(rtp_packet->GetSsrc() - 1);
       if (fec_player_iter != this->players_.end()) {
         this->players_[rtp_packet->GetSsrc()] = fec_player_iter->second;
@@ -114,7 +114,7 @@ void Transport::OnUdpRouterRtpPacketReceived(
 void Transport::OnUdpRouterRtcpPacketReceived(
     bifrost::UdpRouter* socket, RtcpPacketPtr rtcp_packet,
     const struct sockaddr* remote_addr) {
-  //  std::cout << "rtcp:" << Byte::bytes_to_hex(rtcp_packet->GetData(), rtcp_packet->GetSize()) << std::endl;
+  //  RTC_LOG(LS_VERBOSE) << "rtcp:" << Byte::bytes_to_hex(rtcp_packet->GetData(), rtcp_packet->GetSize());
   auto type = rtcp_packet->GetType();
   switch (type) {
     case Type::RR: {
