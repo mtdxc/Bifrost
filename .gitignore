@@ -51,3 +51,4 @@ worker/third_party/libns3/.cproject
 worker/third_party/libns3/.project
 
 worker/third_party/libns3/version.cache
+/worker/third_party/libwebrtc/build/*

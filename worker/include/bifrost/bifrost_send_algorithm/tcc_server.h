@@ -42,7 +42,7 @@ class TransportCongestionControlServer
 
  public:
   uint32_t get_available_bitrate() const { return 0; }
-  double get_packet_loss() const { this->packetLoss; };
+  double get_packet_loss() const { return this->packetLoss; }
   void IncomingPacket(uint64_t nowMs, const RtpPacket* packet);
   void QuicCountIncomingPacket(uint64_t nowMs, const RtpPacket* packet);
   void SetMaxIncomingBitrate(uint32_t bitrate);

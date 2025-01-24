@@ -11,6 +11,7 @@
 #ifndef COMMON_VIDEO_H264_SPS_PARSER_H_
 #define COMMON_VIDEO_H264_SPS_PARSER_H_
 
+#include <stdint.h>
 #include "absl/types/optional.h"
 
 namespace rtc {
