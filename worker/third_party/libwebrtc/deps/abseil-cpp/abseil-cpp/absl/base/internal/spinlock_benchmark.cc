@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,8 +24,22 @@
 namespace {
 
 template <absl::base_internal::SchedulingMode scheduling_mode>
+static void BM_TryLock(benchmark::State& state) {
+  // Ensure a ThreadIdentity is installed so that KERNEL_ONLY has an effect.
+  ABSL_INTERNAL_CHECK(
+      absl::synchronization_internal::GetOrCreateCurrentThreadIdentity() !=
+          nullptr,
+      "GetOrCreateCurrentThreadIdentity() failed");
+
+  static auto* spinlock = new absl::base_internal::SpinLock(scheduling_mode);
+  for (auto _ : state) {
+    if (spinlock->TryLock()) spinlock->Unlock();
+  }
+}
+
+template <absl::base_internal::SchedulingMode scheduling_mode>
 static void BM_SpinLock(benchmark::State& state) {
-  // Ensure a ThreadIdentity is installed.
+  // Ensure a ThreadIdentity is installed so that KERNEL_ONLY has an effect.
   ABSL_INTERNAL_CHECK(
       absl::synchronization_internal::GetOrCreateCurrentThreadIdentity() !=
           nullptr,
@@ -44,6 +58,17 @@ BENCHMARK_TEMPLATE(BM_SpinLock,
     ->ThreadPerCpu();
 
 BENCHMARK_TEMPLATE(BM_SpinLock,
+                   absl::base_internal::SCHEDULE_COOPERATIVE_AND_KERNEL)
+    ->UseRealTime()
+    ->Threads(1)
+    ->ThreadPerCpu();
+
+BENCHMARK_TEMPLATE(BM_TryLock, absl::base_internal::SCHEDULE_KERNEL_ONLY)
+    ->UseRealTime()
+    ->Threads(1)
+    ->ThreadPerCpu();
+
+BENCHMARK_TEMPLATE(BM_TryLock,
                    absl::base_internal::SCHEDULE_COOPERATIVE_AND_KERNEL)
     ->UseRealTime()
     ->Threads(1)

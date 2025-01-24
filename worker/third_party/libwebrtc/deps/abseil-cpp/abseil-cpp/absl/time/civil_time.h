@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -66,17 +66,19 @@
 //
 //   // Valid in C++14
 //   constexpr absl::CivilDay cd(1969, 07, 20);
-//
 
 #ifndef ABSL_TIME_CIVIL_TIME_H_
 #define ABSL_TIME_CIVIL_TIME_H_
 
+#include <iosfwd>
 #include <string>
 
+#include "absl/base/config.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/internal/cctz/include/cctz/civil_time.h"
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 
 namespace time_internal {
 struct second_tag : cctz::detail::second_tag {};
@@ -248,7 +250,7 @@ struct year_tag : month_tag, cctz::detail::year_tag {};
 // int          minute()
 // int          second()
 //
-// Recall that fields inferior to the type's aligment will be set to their
+// Recall that fields inferior to the type's alignment will be set to their
 // minimum valid value.
 //
 // Example:
@@ -371,15 +373,15 @@ using Weekday = time_internal::cctz::weekday;
 
 // GetWeekday()
 //
-// Returns the absl::Weekday for the given absl::CivilDay.
+// Returns the absl::Weekday for the given (realigned) civil-time value.
 //
 // Example:
 //
 //   absl::CivilDay a(2015, 8, 13);
 //   absl::Weekday wd = absl::GetWeekday(a);  // wd == absl::Weekday::thursday
 //
-inline Weekday GetWeekday(CivilDay cd) {
-  return time_internal::cctz::get_weekday(cd);
+inline Weekday GetWeekday(CivilSecond cs) {
+  return time_internal::cctz::get_weekday(cs);
 }
 
 // NextWeekday()
@@ -408,9 +410,9 @@ inline Weekday GetWeekday(CivilDay cd) {
 //
 //   absl::CivilDay d = ...
 //   // Gets the following Thursday if d is not already Thursday
-//   absl::CivilDay thurs1 = absl::PrevWeekday(d, absl::Weekday::thursday) + 7;
+//   absl::CivilDay thurs1 = absl::NextWeekday(d - 1, absl::Weekday::thursday);
 //   // Gets the previous Thursday if d is not already Thursday
-//   absl::CivilDay thurs2 = absl::NextWeekday(d, absl::Weekday::thursday) - 7;
+//   absl::CivilDay thurs2 = absl::PrevWeekday(d + 1, absl::Weekday::thursday);
 //
 inline CivilDay NextWeekday(CivilDay cd, Weekday wd) {
   return CivilDay(time_internal::cctz::next_weekday(cd, wd));
@@ -421,7 +423,7 @@ inline CivilDay PrevWeekday(CivilDay cd, Weekday wd) {
 
 // GetYearDay()
 //
-// Returns the day-of-year for the given absl::CivilDay.
+// Returns the day-of-year for the given (realigned) civil-time value.
 //
 // Example:
 //
@@ -430,8 +432,8 @@ inline CivilDay PrevWeekday(CivilDay cd, Weekday wd) {
 //   absl::CivilDay b(2015, 12, 31);
 //   int yd_dec_31 = absl::GetYearDay(b);  // yd_dec_31 = 365
 //
-inline int GetYearDay(CivilDay cd) {
-  return time_internal::cctz::get_yearday(cd);
+inline int GetYearDay(CivilSecond cs) {
+  return time_internal::cctz::get_yearday(cs);
 }
 
 // FormatCivilTime()
@@ -451,7 +453,7 @@ inline int GetYearDay(CivilDay cd) {
 // Example:
 //
 //   absl::CivilDay d = absl::CivilDay(1969, 7, 20);
-//   string day_string = absl::FormatCivilTime(d);          // "1969-07-20"
+//   std::string day_string = absl::FormatCivilTime(d);  // "1969-07-20"
 //
 std::string FormatCivilTime(CivilSecond c);
 std::string FormatCivilTime(CivilMinute c);
@@ -459,6 +461,83 @@ std::string FormatCivilTime(CivilHour c);
 std::string FormatCivilTime(CivilDay c);
 std::string FormatCivilTime(CivilMonth c);
 std::string FormatCivilTime(CivilYear c);
+
+// Support for StrFormat(), StrCat(), etc
+template <typename Sink>
+void AbslStringify(Sink& sink, CivilSecond c) {
+  sink.Append(FormatCivilTime(c));
+}
+template <typename Sink>
+void AbslStringify(Sink& sink, CivilMinute c) {
+  sink.Append(FormatCivilTime(c));
+}
+template <typename Sink>
+void AbslStringify(Sink& sink, CivilHour c) {
+  sink.Append(FormatCivilTime(c));
+}
+template <typename Sink>
+void AbslStringify(Sink& sink, CivilDay c) {
+  sink.Append(FormatCivilTime(c));
+}
+template <typename Sink>
+void AbslStringify(Sink& sink, CivilMonth c) {
+  sink.Append(FormatCivilTime(c));
+}
+template <typename Sink>
+void AbslStringify(Sink& sink, CivilYear c) {
+  sink.Append(FormatCivilTime(c));
+}
+
+// absl::ParseCivilTime()
+//
+// Parses a civil-time value from the specified `absl::string_view` into the
+// passed output parameter. Returns `true` upon successful parsing.
+//
+// The expected form of the input string is as follows:
+//
+//  Type        | Format
+//  ---------------------------------
+//  CivilSecond | YYYY-MM-DDTHH:MM:SS
+//  CivilMinute | YYYY-MM-DDTHH:MM
+//  CivilHour   | YYYY-MM-DDTHH
+//  CivilDay    | YYYY-MM-DD
+//  CivilMonth  | YYYY-MM
+//  CivilYear   | YYYY
+//
+// Example:
+//
+//   absl::CivilDay d;
+//   bool ok = absl::ParseCivilTime("2018-01-02", &d); // OK
+//
+// Note that parsing will fail if the string's format does not match the
+// expected type exactly. `ParseLenientCivilTime()` below is more lenient.
+//
+bool ParseCivilTime(absl::string_view s, CivilSecond* c);
+bool ParseCivilTime(absl::string_view s, CivilMinute* c);
+bool ParseCivilTime(absl::string_view s, CivilHour* c);
+bool ParseCivilTime(absl::string_view s, CivilDay* c);
+bool ParseCivilTime(absl::string_view s, CivilMonth* c);
+bool ParseCivilTime(absl::string_view s, CivilYear* c);
+
+// ParseLenientCivilTime()
+//
+// Parses any of the formats accepted by `absl::ParseCivilTime()`, but is more
+// lenient if the format of the string does not exactly match the associated
+// type.
+//
+// Example:
+//
+//   absl::CivilDay d;
+//   bool ok = absl::ParseLenientCivilTime("1969-07-20", &d); // OK
+//   ok = absl::ParseLenientCivilTime("1969-07-20T10", &d);   // OK: T10 floored
+//   ok = absl::ParseLenientCivilTime("1969-07", &d);   // OK: day defaults to 1
+//
+bool ParseLenientCivilTime(absl::string_view s, CivilSecond* c);
+bool ParseLenientCivilTime(absl::string_view s, CivilMinute* c);
+bool ParseLenientCivilTime(absl::string_view s, CivilHour* c);
+bool ParseLenientCivilTime(absl::string_view s, CivilDay* c);
+bool ParseLenientCivilTime(absl::string_view s, CivilMonth* c);
+bool ParseLenientCivilTime(absl::string_view s, CivilYear* c);
 
 namespace time_internal {  // For functions found via ADL on civil-time tags.
 
@@ -469,7 +548,7 @@ namespace time_internal {  // For functions found via ADL on civil-time tags.
 //
 // Example:
 //
-//   absl::CivilDay d = absl::CivilDay("1969-07-20");
+//   absl::CivilDay d = absl::CivilDay(1969, 7, 20);
 //   std::cout << "Date is: " << d << "\n";
 //
 std::ostream& operator<<(std::ostream& os, CivilYear y);
@@ -479,8 +558,32 @@ std::ostream& operator<<(std::ostream& os, CivilHour h);
 std::ostream& operator<<(std::ostream& os, CivilMinute m);
 std::ostream& operator<<(std::ostream& os, CivilSecond s);
 
+// AbslParseFlag()
+//
+// Parses the command-line flag string representation `s` into a civil-time
+// value. Flags must be specified in a format that is valid for
+// `absl::ParseLenientCivilTime()`.
+bool AbslParseFlag(absl::string_view s, CivilSecond* c, std::string* error);
+bool AbslParseFlag(absl::string_view s, CivilMinute* c, std::string* error);
+bool AbslParseFlag(absl::string_view s, CivilHour* c, std::string* error);
+bool AbslParseFlag(absl::string_view s, CivilDay* c, std::string* error);
+bool AbslParseFlag(absl::string_view s, CivilMonth* c, std::string* error);
+bool AbslParseFlag(absl::string_view s, CivilYear* c, std::string* error);
+
+// AbslUnparseFlag()
+//
+// Unparses a civil-time value into a command-line string representation using
+// the format specified by `absl::ParseCivilTime()`.
+std::string AbslUnparseFlag(CivilSecond c);
+std::string AbslUnparseFlag(CivilMinute c);
+std::string AbslUnparseFlag(CivilHour c);
+std::string AbslUnparseFlag(CivilDay c);
+std::string AbslUnparseFlag(CivilMonth c);
+std::string AbslUnparseFlag(CivilYear c);
+
 }  // namespace time_internal
 
+ABSL_NAMESPACE_END
 }  // namespace absl
 
 #endif  // ABSL_TIME_CIVIL_TIME_H_

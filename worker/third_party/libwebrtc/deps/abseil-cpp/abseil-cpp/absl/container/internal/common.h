@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ABSL_CONTAINER_INTERNAL_CONTAINER_H_
-#define ABSL_CONTAINER_INTERNAL_CONTAINER_H_
+#ifndef ABSL_CONTAINER_INTERNAL_COMMON_H_
+#define ABSL_CONTAINER_INTERNAL_COMMON_H_
 
 #include <cassert>
 #include <type_traits>
@@ -22,6 +22,7 @@
 #include "absl/types/optional.h"
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 namespace container_internal {
 
 template <class, class = void>
@@ -55,7 +56,7 @@ class node_handle_base {
  public:
   using allocator_type = Alloc;
 
-  constexpr node_handle_base() {}
+  constexpr node_handle_base() = default;
   node_handle_base(node_handle_base&& other) noexcept {
     *this = std::move(other);
   }
@@ -77,8 +78,17 @@ class node_handle_base {
  protected:
   friend struct CommonAccess;
 
-  node_handle_base(const allocator_type& a, slot_type* s) : alloc_(a) {
+  struct transfer_tag_t {};
+  node_handle_base(transfer_tag_t, const allocator_type& a, slot_type* s)
+      : alloc_(a) {
     PolicyTraits::transfer(alloc(), slot(), s);
+  }
+
+  struct construct_tag_t {};
+  template <typename... Args>
+  node_handle_base(construct_tag_t, const allocator_type& a, Args&&... args)
+      : alloc_(a) {
+    PolicyTraits::construct(alloc(), slot(), std::forward<Args>(args)...);
   }
 
   void destroy() {
@@ -100,16 +110,15 @@ class node_handle_base {
   allocator_type* alloc() { return std::addressof(*alloc_); }
 
  private:
-  absl::optional<allocator_type> alloc_;
-  mutable absl::aligned_storage_t<sizeof(slot_type), alignof(slot_type)>
-      slot_space_;
+  absl::optional<allocator_type> alloc_ = {};
+  alignas(slot_type) mutable unsigned char slot_space_[sizeof(slot_type)] = {};
 };
 
 // For sets.
 template <typename Policy, typename PolicyTraits, typename Alloc,
           typename = void>
 class node_handle : public node_handle_base<PolicyTraits, Alloc> {
-  using Base = typename node_handle::node_handle_base;
+  using Base = node_handle_base<PolicyTraits, Alloc>;
 
  public:
   using value_type = typename PolicyTraits::value_type;
@@ -121,7 +130,7 @@ class node_handle : public node_handle_base<PolicyTraits, Alloc> {
  private:
   friend struct CommonAccess;
 
-  node_handle(const Alloc& a, typename Base::slot_type* s) : Base(a, s) {}
+  using Base::Base;
 };
 
 // For maps.
@@ -129,7 +138,8 @@ template <typename Policy, typename PolicyTraits, typename Alloc>
 class node_handle<Policy, PolicyTraits, Alloc,
                   absl::void_t<typename Policy::mapped_type>>
     : public node_handle_base<PolicyTraits, Alloc> {
-  using Base = typename node_handle::node_handle_base;
+  using Base = node_handle_base<PolicyTraits, Alloc>;
+  using slot_type = typename PolicyTraits::slot_type;
 
  public:
   using key_type = typename Policy::key_type;
@@ -137,8 +147,11 @@ class node_handle<Policy, PolicyTraits, Alloc,
 
   constexpr node_handle() {}
 
-  auto key() const -> decltype(PolicyTraits::key(this->slot())) {
-    return PolicyTraits::key(this->slot());
+  // When C++17 is available, we can use std::launder to provide mutable
+  // access to the key. Otherwise, we provide const access.
+  auto key() const
+      -> decltype(PolicyTraits::mutable_key(std::declval<slot_type*>())) {
+    return PolicyTraits::mutable_key(this->slot());
   }
 
   mapped_type& mapped() const {
@@ -148,7 +161,7 @@ class node_handle<Policy, PolicyTraits, Alloc,
  private:
   friend struct CommonAccess;
 
-  node_handle(const Alloc& a, typename Base::slot_type* s) : Base(a, s) {}
+  using Base::Base;
 };
 
 // Provide access to non-public node-handle functions.
@@ -159,13 +172,23 @@ struct CommonAccess {
   }
 
   template <typename Node>
+  static void Destroy(Node* node) {
+    node->destroy();
+  }
+
+  template <typename Node>
   static void Reset(Node* node) {
     node->reset();
   }
 
   template <typename T, typename... Args>
-  static T Make(Args&&... args) {
-    return T(std::forward<Args>(args)...);
+  static T Transfer(Args&&... args) {
+    return T(typename T::transfer_tag_t{}, std::forward<Args>(args)...);
+  }
+
+  template <typename T, typename... Args>
+  static T Construct(Args&&... args) {
+    return T(typename T::construct_tag_t{}, std::forward<Args>(args)...);
   }
 };
 
@@ -178,6 +201,7 @@ struct InsertReturnType {
 };
 
 }  // namespace container_internal
+ABSL_NAMESPACE_END
 }  // namespace absl
 
-#endif  // ABSL_CONTAINER_INTERNAL_CONTAINER_H_
+#endif  // ABSL_CONTAINER_INTERNAL_COMMON_H_

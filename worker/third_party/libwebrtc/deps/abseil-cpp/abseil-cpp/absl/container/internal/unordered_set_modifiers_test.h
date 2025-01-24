@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@
 #include "absl/container/internal/hash_policy_testing.h"
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 namespace container_internal {
 
 template <class UnordSet>
@@ -71,6 +72,36 @@ TYPED_TEST_P(ModifiersTest, InsertRange) {
   TypeParam m;
   m.insert(values.begin(), values.end());
   ASSERT_THAT(keys(m), ::testing::UnorderedElementsAreArray(values));
+}
+
+TYPED_TEST_P(ModifiersTest, InsertWithinCapacity) {
+  using T = hash_internal::GeneratedType<TypeParam>;
+  T val = hash_internal::Generator<T>()();
+  TypeParam m;
+  m.reserve(10);
+  const size_t original_capacity = m.bucket_count();
+  m.insert(val);
+  EXPECT_EQ(m.bucket_count(), original_capacity);
+  m.insert(val);
+  EXPECT_EQ(m.bucket_count(), original_capacity);
+}
+
+TYPED_TEST_P(ModifiersTest, InsertRangeWithinCapacity) {
+#if !defined(__GLIBCXX__)
+  using T = hash_internal::GeneratedType<TypeParam>;
+  std::vector<T> base_values;
+  std::generate_n(std::back_inserter(base_values), 10,
+                  hash_internal::Generator<T>());
+  std::vector<T> values;
+  while (values.size() != 100) {
+    values.insert(values.end(), base_values.begin(), base_values.end());
+  }
+  TypeParam m;
+  m.reserve(10);
+  const size_t original_capacity = m.bucket_count();
+  m.insert(values.begin(), values.end());
+  EXPECT_EQ(m.bucket_count(), original_capacity);
+#endif
 }
 
 TYPED_TEST_P(ModifiersTest, Emplace) {
@@ -178,11 +209,13 @@ TYPED_TEST_P(ModifiersTest, Swap) {
 // TODO(alkis): Write tests for extract.
 // TODO(alkis): Write tests for merge.
 
-REGISTER_TYPED_TEST_CASE_P(ModifiersTest, Clear, Insert, InsertHint,
-                           InsertRange, Emplace, EmplaceHint, Erase, EraseRange,
-                           EraseKey, Swap);
+REGISTER_TYPED_TEST_SUITE_P(ModifiersTest, Clear, Insert, InsertHint,
+                            InsertRange, InsertWithinCapacity,
+                            InsertRangeWithinCapacity, Emplace, EmplaceHint,
+                            Erase, EraseRange, EraseKey, Swap);
 
 }  // namespace container_internal
+ABSL_NAMESPACE_END
 }  // namespace absl
 
 #endif  // ABSL_CONTAINER_INTERNAL_UNORDERED_SET_MODIFIERS_TEST_H_

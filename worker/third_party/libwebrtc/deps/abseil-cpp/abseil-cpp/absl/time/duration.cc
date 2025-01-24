@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,10 +49,13 @@
 //
 // Arithmetic overflows/underflows to +/- infinity and saturates.
 
+#if defined(_MSC_VER)
+#include <winsock2.h>  // for timeval
+#endif
+
 #include <algorithm>
 #include <cassert>
-#include <cctype>
-#include <cerrno>
+#include <chrono>  // NOLINT(build/c++11)
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
@@ -62,11 +65,16 @@
 #include <limits>
 #include <string>
 
+#include "absl/base/attributes.h"
 #include "absl/base/casts.h"
+#include "absl/base/config.h"
 #include "absl/numeric/int128.h"
+#include "absl/strings/string_view.h"
+#include "absl/strings/strip.h"
 #include "absl/time/time.h"
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 
 namespace {
 
@@ -86,13 +94,6 @@ inline bool IsFinite(double d) {
 inline bool IsValidDivisor(double d) {
   if (std::isnan(d)) return false;
   return d != 0.0;
-}
-
-// Can't use std::round() because it is only available in C++11.
-// Note that we ignore the possibility of floating-point over/underflow.
-template <typename Double>
-inline double Round(Double d) {
-  return d < 0 ? std::ceil(d - 0.5) : std::floor(d + 0.5);
 }
 
 // *sec may be positive or negative.  *ticks must be in the range
@@ -193,11 +194,11 @@ inline int64_t DecodeTwosComp(uint64_t v) { return absl::bit_cast<int64_t>(v); }
 // double as overflow cases.
 inline bool SafeAddRepHi(double a_hi, double b_hi, Duration* d) {
   double c = a_hi + b_hi;
-  if (c >= kint64max) {
+  if (c >= static_cast<double>(kint64max)) {
     *d = InfiniteDuration();
     return false;
   }
-  if (c <= kint64min) {
+  if (c <= static_cast<double>(kint64min)) {
     *d = -InfiniteDuration();
     return false;
   }
@@ -252,7 +253,7 @@ inline Duration ScaleDouble(Duration d, double r) {
   double lo_frac = std::modf(lo_doub, &lo_int);
 
   // Rolls lo into hi if necessary.
-  int64_t lo64 = Round(lo_frac * kTicksPerSecond);
+  int64_t lo64 = std::round(lo_frac * kTicksPerSecond);
 
   Duration ans;
   if (!SafeAddRepHi(hi_int, lo_int, &ans)) return ans;
@@ -348,7 +349,7 @@ namespace time_internal {
 // the remainder.  If it does not saturate, the remainder remain accurate,
 // but the returned quotient will over/underflow int64_t and should not be used.
 int64_t IDivDuration(bool satq, const Duration num, const Duration den,
-                   Duration* rem) {
+                     Duration* rem) {
   int64_t q = 0;
   if (IDivFastPath(num, den, &q, rem)) {
     return q;
@@ -399,16 +400,18 @@ int64_t IDivDuration(bool satq, const Duration num, const Duration den,
 Duration& Duration::operator+=(Duration rhs) {
   if (time_internal::IsInfiniteDuration(*this)) return *this;
   if (time_internal::IsInfiniteDuration(rhs)) return *this = rhs;
-  const int64_t orig_rep_hi = rep_hi_;
-  rep_hi_ =
-      DecodeTwosComp(EncodeTwosComp(rep_hi_) + EncodeTwosComp(rhs.rep_hi_));
+  const int64_t orig_rep_hi = rep_hi_.Get();
+  rep_hi_ = DecodeTwosComp(EncodeTwosComp(rep_hi_.Get()) +
+                           EncodeTwosComp(rhs.rep_hi_.Get()));
   if (rep_lo_ >= kTicksPerSecond - rhs.rep_lo_) {
-    rep_hi_ = DecodeTwosComp(EncodeTwosComp(rep_hi_) + 1);
+    rep_hi_ = DecodeTwosComp(EncodeTwosComp(rep_hi_.Get()) + 1);
     rep_lo_ -= kTicksPerSecond;
   }
   rep_lo_ += rhs.rep_lo_;
-  if (rhs.rep_hi_ < 0 ? rep_hi_ > orig_rep_hi : rep_hi_ < orig_rep_hi) {
-    return *this = rhs.rep_hi_ < 0 ? -InfiniteDuration() : InfiniteDuration();
+  if (rhs.rep_hi_.Get() < 0 ? rep_hi_.Get() > orig_rep_hi
+                            : rep_hi_.Get() < orig_rep_hi) {
+    return *this =
+               rhs.rep_hi_.Get() < 0 ? -InfiniteDuration() : InfiniteDuration();
   }
   return *this;
 }
@@ -416,18 +419,21 @@ Duration& Duration::operator+=(Duration rhs) {
 Duration& Duration::operator-=(Duration rhs) {
   if (time_internal::IsInfiniteDuration(*this)) return *this;
   if (time_internal::IsInfiniteDuration(rhs)) {
-    return *this = rhs.rep_hi_ >= 0 ? -InfiniteDuration() : InfiniteDuration();
+    return *this = rhs.rep_hi_.Get() >= 0 ? -InfiniteDuration()
+                                          : InfiniteDuration();
   }
-  const int64_t orig_rep_hi = rep_hi_;
-  rep_hi_ =
-      DecodeTwosComp(EncodeTwosComp(rep_hi_) - EncodeTwosComp(rhs.rep_hi_));
+  const int64_t orig_rep_hi = rep_hi_.Get();
+  rep_hi_ = DecodeTwosComp(EncodeTwosComp(rep_hi_.Get()) -
+                           EncodeTwosComp(rhs.rep_hi_.Get()));
   if (rep_lo_ < rhs.rep_lo_) {
-    rep_hi_ = DecodeTwosComp(EncodeTwosComp(rep_hi_) - 1);
+    rep_hi_ = DecodeTwosComp(EncodeTwosComp(rep_hi_.Get()) - 1);
     rep_lo_ += kTicksPerSecond;
   }
   rep_lo_ -= rhs.rep_lo_;
-  if (rhs.rep_hi_ < 0 ? rep_hi_ < orig_rep_hi : rep_hi_ > orig_rep_hi) {
-    return *this = rhs.rep_hi_ >= 0 ? -InfiniteDuration() : InfiniteDuration();
+  if (rhs.rep_hi_.Get() < 0 ? rep_hi_.Get() < orig_rep_hi
+                            : rep_hi_.Get() > orig_rep_hi) {
+    return *this = rhs.rep_hi_.Get() >= 0 ? -InfiniteDuration()
+                                          : InfiniteDuration();
   }
   return *this;
 }
@@ -438,7 +444,7 @@ Duration& Duration::operator-=(Duration rhs) {
 
 Duration& Duration::operator*=(int64_t r) {
   if (time_internal::IsInfiniteDuration(*this)) {
-    const bool is_neg = (r < 0) != (rep_hi_ < 0);
+    const bool is_neg = (r < 0) != (rep_hi_.Get() < 0);
     return *this = is_neg ? -InfiniteDuration() : InfiniteDuration();
   }
   return *this = ScaleFixed<SafeMultiply>(*this, r);
@@ -446,7 +452,7 @@ Duration& Duration::operator*=(int64_t r) {
 
 Duration& Duration::operator*=(double r) {
   if (time_internal::IsInfiniteDuration(*this) || !IsFinite(r)) {
-    const bool is_neg = (std::signbit(r) != 0) != (rep_hi_ < 0);
+    const bool is_neg = std::signbit(r) != (rep_hi_.Get() < 0);
     return *this = is_neg ? -InfiniteDuration() : InfiniteDuration();
   }
   return *this = ScaleDouble<std::multiplies>(*this, r);
@@ -454,7 +460,7 @@ Duration& Duration::operator*=(double r) {
 
 Duration& Duration::operator/=(int64_t r) {
   if (time_internal::IsInfiniteDuration(*this) || r == 0) {
-    const bool is_neg = (r < 0) != (rep_hi_ < 0);
+    const bool is_neg = (r < 0) != (rep_hi_.Get() < 0);
     return *this = is_neg ? -InfiniteDuration() : InfiniteDuration();
   }
   return *this = ScaleFixed<std::divides>(*this, r);
@@ -462,7 +468,7 @@ Duration& Duration::operator/=(int64_t r) {
 
 Duration& Duration::operator/=(double r) {
   if (time_internal::IsInfiniteDuration(*this) || !IsValidDivisor(r)) {
-    const bool is_neg = (std::signbit(r) != 0) != (rep_hi_ < 0);
+    const bool is_neg = std::signbit(r) != (rep_hi_.Get() < 0);
     return *this = is_neg ? -InfiniteDuration() : InfiniteDuration();
   }
   return *this = ScaleDouble<std::divides>(*this, r);
@@ -609,7 +615,7 @@ timespec ToTimespec(Duration d) {
         rep_lo -= kTicksPerSecond;
       }
     }
-    ts.tv_sec = rep_hi;
+    ts.tv_sec = static_cast<decltype(ts.tv_sec)>(rep_hi);
     if (ts.tv_sec == rep_hi) {  // no time_t narrowing
       ts.tv_nsec = rep_lo / kTicksPerNanosecond;
       return ts;
@@ -637,7 +643,7 @@ timeval ToTimeval(Duration d) {
       ts.tv_nsec -= 1000 * 1000 * 1000;
     }
   }
-  tv.tv_sec = ts.tv_sec;
+  tv.tv_sec = static_cast<decltype(tv.tv_sec)>(ts.tv_sec);
   if (tv.tv_sec != ts.tv_sec) {  // narrowing
     if (ts.tv_sec < 0) {
       tv.tv_sec = std::numeric_limits<decltype(tv.tv_sec)>::min();
@@ -683,7 +689,7 @@ namespace {
 char* Format64(char* ep, int width, int64_t v) {
   do {
     --width;
-    *--ep = '0' + (v % 10);  // contiguous digits
+    *--ep = static_cast<char>('0' + (v % 10));  // contiguous digits
   } while (v /= 10);
   while (--width >= 0) *--ep = '0';  // zero pad
   return ep;
@@ -703,66 +709,69 @@ char* Format64(char* ep, int width, int64_t v) {
 // fractional digits, because it is in the noise of what a Duration can
 // represent.
 struct DisplayUnit {
-  const char* abbr;
+  absl::string_view abbr;
   int prec;
   double pow10;
 };
-const DisplayUnit kDisplayNano = {"ns", 2, 1e2};
-const DisplayUnit kDisplayMicro = {"us", 5, 1e5};
-const DisplayUnit kDisplayMilli = {"ms", 8, 1e8};
-const DisplayUnit kDisplaySec = {"s", 11, 1e11};
-const DisplayUnit kDisplayMin = {"m", -1, 0.0};   // prec ignored
-const DisplayUnit kDisplayHour = {"h", -1, 0.0};  // prec ignored
+ABSL_CONST_INIT const DisplayUnit kDisplayNano = {"ns", 2, 1e2};
+ABSL_CONST_INIT const DisplayUnit kDisplayMicro = {"us", 5, 1e5};
+ABSL_CONST_INIT const DisplayUnit kDisplayMilli = {"ms", 8, 1e8};
+ABSL_CONST_INIT const DisplayUnit kDisplaySec = {"s", 11, 1e11};
+ABSL_CONST_INIT const DisplayUnit kDisplayMin = {"m", -1, 0.0};  // prec ignored
+ABSL_CONST_INIT const DisplayUnit kDisplayHour = {"h", -1,
+                                                  0.0};  // prec ignored
 
 void AppendNumberUnit(std::string* out, int64_t n, DisplayUnit unit) {
   char buf[sizeof("2562047788015216")];  // hours in max duration
   char* const ep = buf + sizeof(buf);
   char* bp = Format64(ep, 0, n);
   if (*bp != '0' || bp + 1 != ep) {
-    out->append(bp, ep - bp);
-    out->append(unit.abbr);
+    out->append(bp, static_cast<size_t>(ep - bp));
+    out->append(unit.abbr.data(), unit.abbr.size());
   }
 }
 
 // Note: unit.prec is limited to double's digits10 value (typically 15) so it
 // always fits in buf[].
 void AppendNumberUnit(std::string* out, double n, DisplayUnit unit) {
-  const int buf_size = std::numeric_limits<double>::digits10;
-  const int prec = std::min(buf_size, unit.prec);
-  char buf[buf_size];  // also large enough to hold integer part
+  constexpr int kBufferSize = std::numeric_limits<double>::digits10;
+  const int prec = std::min(kBufferSize, unit.prec);
+  char buf[kBufferSize];  // also large enough to hold integer part
   char* ep = buf + sizeof(buf);
   double d = 0;
-  int64_t frac_part = Round(std::modf(n, &d) * unit.pow10);
+  int64_t frac_part = std::round(std::modf(n, &d) * unit.pow10);
   int64_t int_part = d;
   if (int_part != 0 || frac_part != 0) {
     char* bp = Format64(ep, 0, int_part);  // always < 1000
-    out->append(bp, ep - bp);
+    out->append(bp, static_cast<size_t>(ep - bp));
     if (frac_part != 0) {
       out->push_back('.');
       bp = Format64(ep, prec, frac_part);
       while (ep[-1] == '0') --ep;
-      out->append(bp, ep - bp);
+      out->append(bp, static_cast<size_t>(ep - bp));
     }
-    out->append(unit.abbr);
+    out->append(unit.abbr.data(), unit.abbr.size());
   }
 }
 
 }  // namespace
 
-// From Go's doc at http://golang.org/pkg/time/#Duration.String
+// From Go's doc at https://golang.org/pkg/time/#Duration.String
 //   [FormatDuration] returns a string representing the duration in the
-//   form "72h3m0.5s".  Leading zero units are omitted.  As a special
+//   form "72h3m0.5s". Leading zero units are omitted.  As a special
 //   case, durations less than one second format use a smaller unit
 //   (milli-, micro-, or nanoseconds) to ensure that the leading digit
-//   is non-zero.  The zero duration formats as 0, with no unit.
+//   is non-zero.
+// Unlike Go, we format the zero duration as 0, with no unit.
 std::string FormatDuration(Duration d) {
-  const Duration min_duration = Seconds(kint64min);
-  if (d == min_duration) {
+  constexpr Duration kMinDuration = Seconds(kint64min);
+  std::string s;
+  if (d == kMinDuration) {
     // Avoid needing to negate kint64min by directly returning what the
     // following code should produce in that case.
-    return "-2562047788015215h30m8s";
+    s = "-2562047788015215h30m8s";
+    return s;
   }
-  std::string s;
   if (d < ZeroDuration()) {
     s.append("-");
     d = -d;
@@ -795,23 +804,27 @@ namespace {
 // A helper for ParseDuration() that parses a leading number from the given
 // string and stores the result in *int_part/*frac_part/*frac_scale.  The
 // given string pointer is modified to point to the first unconsumed char.
-bool ConsumeDurationNumber(const char** dpp, int64_t* int_part,
+bool ConsumeDurationNumber(const char** dpp, const char* ep, int64_t* int_part,
                            int64_t* frac_part, int64_t* frac_scale) {
   *int_part = 0;
   *frac_part = 0;
   *frac_scale = 1;  // invariant: *frac_part < *frac_scale
   const char* start = *dpp;
-  for (; std::isdigit(**dpp); *dpp += 1) {
+  for (; *dpp != ep; *dpp += 1) {
     const int d = **dpp - '0';  // contiguous digits
+    if (d < 0 || 10 <= d) break;
+
     if (*int_part > kint64max / 10) return false;
     *int_part *= 10;
     if (*int_part > kint64max - d) return false;
     *int_part += d;
   }
   const bool int_part_empty = (*dpp == start);
-  if (**dpp != '.') return !int_part_empty;
-  for (*dpp += 1; std::isdigit(**dpp); *dpp += 1) {
+  if (*dpp == ep || **dpp != '.') return !int_part_empty;
+
+  for (*dpp += 1; *dpp != ep; *dpp += 1) {
     const int d = **dpp - '0';  // contiguous digits
+    if (d < 0 || 10 <= d) break;
     if (*frac_scale <= kint64max / 10) {
       *frac_part *= 10;
       *frac_part += d;
@@ -825,74 +838,97 @@ bool ConsumeDurationNumber(const char** dpp, int64_t* int_part,
 // ns, us, ms, s, m, h) from the given string and stores the resulting unit
 // in "*unit".  The given string pointer is modified to point to the first
 // unconsumed char.
-bool ConsumeDurationUnit(const char** start, Duration* unit) {
-  const char *s = *start;
-  bool ok = true;
-  if (strncmp(s, "ns", 2) == 0) {
-    s += 2;
-    *unit = Nanoseconds(1);
-  } else if (strncmp(s, "us", 2) == 0) {
-    s += 2;
-    *unit = Microseconds(1);
-  } else if (strncmp(s, "ms", 2) == 0) {
-    s += 2;
-    *unit = Milliseconds(1);
-  } else if (strncmp(s, "s", 1) == 0) {
-    s += 1;
-    *unit = Seconds(1);
-  } else if (strncmp(s, "m", 1) == 0) {
-    s += 1;
-    *unit = Minutes(1);
-  } else if (strncmp(s, "h", 1) == 0) {
-    s += 1;
-    *unit = Hours(1);
-  } else {
-    ok = false;
+bool ConsumeDurationUnit(const char** start, const char* end, Duration* unit) {
+  size_t size = static_cast<size_t>(end - *start);
+  switch (size) {
+    case 0:
+      return false;
+    default:
+      switch (**start) {
+        case 'n':
+          if (*(*start + 1) == 's') {
+            *start += 2;
+            *unit = Nanoseconds(1);
+            return true;
+          }
+          break;
+        case 'u':
+          if (*(*start + 1) == 's') {
+            *start += 2;
+            *unit = Microseconds(1);
+            return true;
+          }
+          break;
+        case 'm':
+          if (*(*start + 1) == 's') {
+            *start += 2;
+            *unit = Milliseconds(1);
+            return true;
+          }
+          break;
+        default:
+          break;
+      }
+      ABSL_FALLTHROUGH_INTENDED;
+    case 1:
+      switch (**start) {
+        case 's':
+          *unit = Seconds(1);
+          *start += 1;
+          return true;
+        case 'm':
+          *unit = Minutes(1);
+          *start += 1;
+          return true;
+        case 'h':
+          *unit = Hours(1);
+          *start += 1;
+          return true;
+        default:
+          return false;
+      }
   }
-  *start = s;
-  return ok;
 }
 
 }  // namespace
 
-// From Go's doc at http://golang.org/pkg/time/#ParseDuration
-//   [ParseDuration] parses a duration string.  A duration string is
+// From Go's doc at https://golang.org/pkg/time/#ParseDuration
+//   [ParseDuration] parses a duration string. A duration string is
 //   a possibly signed sequence of decimal numbers, each with optional
 //   fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m".
 //   Valid time units are "ns", "us" "ms", "s", "m", "h".
-bool ParseDuration(const std::string& dur_string, Duration* d) {
-  const char* start = dur_string.c_str();
+bool ParseDuration(absl::string_view dur_sv, Duration* d) {
   int sign = 1;
-
-  if (*start == '-' || *start == '+') {
-    sign = *start == '-' ? -1 : 1;
-    ++start;
+  if (absl::ConsumePrefix(&dur_sv, "-")) {
+    sign = -1;
+  } else {
+    absl::ConsumePrefix(&dur_sv, "+");
   }
+  if (dur_sv.empty()) return false;
 
-  // Can't parse a duration from an empty std::string.
-  if (*start == '\0') {
-    return false;
-  }
-
-  // Special case for a std::string of "0".
-  if (*start == '0' && *(start + 1) == '\0') {
+  // Special case for a string of "0".
+  if (dur_sv == "0") {
     *d = ZeroDuration();
     return true;
   }
 
-  if (strcmp(start, "inf") == 0) {
+  if (dur_sv == "inf") {
     *d = sign * InfiniteDuration();
     return true;
   }
 
+  const char* start = dur_sv.data();
+  const char* end = start + dur_sv.size();
+
   Duration dur;
-  while (*start != '\0') {
+  while (start != end) {
     int64_t int_part;
     int64_t frac_part;
     int64_t frac_scale;
     Duration unit;
-    if (!ConsumeDurationNumber(&start, &int_part, &frac_part, &frac_scale) ||
-        !ConsumeDurationUnit(&start, &unit)) {
+    if (!ConsumeDurationNumber(&start, end, &int_part, &frac_part,
+                               &frac_scale) ||
+        !ConsumeDurationUnit(&start, end, &unit)) {
       return false;
     }
     if (int_part != 0) dur += sign * int_part * unit;
@@ -901,10 +937,17 @@ bool ParseDuration(const std::string& dur_string, Duration* d) {
   *d = dur;
   return true;
 }
+
+bool AbslParseFlag(absl::string_view text, Duration* dst, std::string*) {
+  return ParseDuration(text, dst);
+}
+
+std::string AbslUnparseFlag(Duration d) { return FormatDuration(d); }
 bool ParseFlag(const std::string& text, Duration* dst, std::string* ) {
   return ParseDuration(text, dst);
 }
 
 std::string UnparseFlag(Duration d) { return FormatDuration(d); }
 
+ABSL_NAMESPACE_END
 }  // namespace absl

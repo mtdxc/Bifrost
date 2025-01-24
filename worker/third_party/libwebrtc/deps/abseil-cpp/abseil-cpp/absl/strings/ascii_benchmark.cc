@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,9 @@
 
 #include "absl/strings/ascii.h"
 
+#include <algorithm>
 #include <cctype>
+#include <cstddef>
 #include <string>
 #include <array>
 #include <random>
@@ -103,18 +105,28 @@ static void BM_StrToLower(benchmark::State& state) {
   const int size = state.range(0);
   std::string s(size, 'X');
   for (auto _ : state) {
-    benchmark::DoNotOptimize(absl::AsciiStrToLower(s));
+    benchmark::DoNotOptimize(s);
+    std::string res = absl::AsciiStrToLower(s);
+    benchmark::DoNotOptimize(res);
   }
 }
-BENCHMARK(BM_StrToLower)->Range(1, 1 << 20);
+BENCHMARK(BM_StrToLower)
+    ->DenseRange(0, 32)
+    ->RangeMultiplier(2)
+    ->Range(64, 1 << 20);
 
 static void BM_StrToUpper(benchmark::State& state) {
   const int size = state.range(0);
   std::string s(size, 'x');
   for (auto _ : state) {
-    benchmark::DoNotOptimize(absl::AsciiStrToUpper(s));
+    benchmark::DoNotOptimize(s);
+    std::string res = absl::AsciiStrToUpper(s);
+    benchmark::DoNotOptimize(res);
   }
 }
-BENCHMARK(BM_StrToUpper)->Range(1, 1 << 20);
+BENCHMARK(BM_StrToUpper)
+    ->DenseRange(0, 32)
+    ->RangeMultiplier(2)
+    ->Range(64, 1 << 20);
 
 }  // namespace

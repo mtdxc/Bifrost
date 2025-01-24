@@ -5,7 +5,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+#      https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +13,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+absl_cc_library(
+  NAME
+    bits
+  HDRS
+    "bits.h"
+    "internal/bits.h"
+  COPTS
+    ${ABSL_DEFAULT_COPTS}
+  DEPS
+    absl::core_headers
+  PUBLIC
+)
+
+absl_cc_test(
+  NAME
+    bits_test
+  SRCS
+    "bits_test.cc"
+  COPTS
+    ${ABSL_TEST_COPTS}
+  DEPS
+    absl::bits
+    absl::core_headers
+    absl::random_random
+    GTest::gmock_main
+)
 
 absl_cc_library(
   NAME
@@ -28,6 +55,7 @@ absl_cc_library(
   DEPS
     absl::config
     absl::core_headers
+    absl::bits
   PUBLIC
 )
 
@@ -42,17 +70,31 @@ absl_cc_test(
   DEPS
     absl::int128
     absl::base
-    absl::core_headers
     absl::hash_testing
     absl::type_traits
-    gmock_main
+    absl::strings
+    GTest::gmock_main
 )
 
 # component target
 absl_cc_library(
   NAME
     numeric
+  COPTS
+    ${ABSL_DEFAULT_COPTS}
   DEPS
     absl::int128
+  PUBLIC
+)
+
+absl_cc_library(
+  NAME
+    numeric_representation
+  HDRS
+    "internal/representation.h"
+  COPTS
+    ${ABSL_DEFAULT_COPTS}
+  DEPS
+    absl::config
   PUBLIC
 )
