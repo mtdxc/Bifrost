@@ -14,9 +14,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "webrtc/api/array_view.h"
-#include "webrtc/api/function_view.h"
-#include "webrtc/rtc_base/buffer.h"
+#include "api/array_view.h"
+#include "api/function_view.h"
+#include "rtc_base/buffer.h"
 
 namespace webrtc {
 namespace rtcp {

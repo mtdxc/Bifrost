@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/rtc_base/system/gcd_helpers.h"
+#include "rtc_base/system/gcd_helpers.h"
 
 dispatch_queue_t RTCDispatchQueueCreateWithTarget(const char *label,
                                                   dispatch_queue_attr_t attr,

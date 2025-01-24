@@ -14,13 +14,13 @@
 #include <stdint.h>
 
 #include "absl/types/optional.h"
-#include "webrtc/api/transport/network_types.h"
-#include "webrtc/api/transport/webrtc_key_value_config.h"
-#include "webrtc/api/units/data_rate.h"
-#include "webrtc/api/units/timestamp.h"
-#include "webrtc/modules/congestion_controller/goog_cc/link_capacity_estimator.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/bwe_defines.h"
-#include "webrtc/rtc_base/experiments/field_trial_parser.h"
+#include "api/transport/network_types.h"
+#include "api/transport/webrtc_key_value_config.h"
+#include "api/units/data_rate.h"
+#include "api/units/timestamp.h"
+#include "modules/congestion_controller/goog_cc/link_capacity_estimator.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 
 namespace webrtc {
 // A rate control implementation based on additive increases of

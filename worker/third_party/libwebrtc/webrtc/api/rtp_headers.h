@@ -17,12 +17,12 @@
 #include <string>
 
 #include "absl/types/optional.h"
-#include "webrtc/api/array_view.h"
-#include "webrtc/api/units/timestamp.h"
-#include "webrtc/api/video/color_space.h"
-#include "webrtc/api/video/video_content_type.h"
-#include "webrtc/api/video/video_rotation.h"
-#include "webrtc/api/video/video_timing.h"
+#include "api/array_view.h"
+#include "api/units/timestamp.h"
+#include "api/video/color_space.h"
+#include "api/video/video_content_type.h"
+#include "api/video/video_rotation.h"
+#include "api/video/video_timing.h"
 
 namespace webrtc {
 

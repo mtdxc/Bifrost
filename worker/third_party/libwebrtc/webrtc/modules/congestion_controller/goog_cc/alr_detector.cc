@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/congestion_controller/goog_cc/alr_detector.h"
+#include "modules/congestion_controller/goog_cc/alr_detector.h"
 
 #include <cstdint>
 #include <cstdio>
 #include <memory>
 
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/numerics/safe_conversions.h"
-#include "webrtc/rtc_base/time_utils.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 

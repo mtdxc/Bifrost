@@ -14,10 +14,10 @@
 #include <stdint.h>
 
 #include "absl/types/optional.h"
-#include "webrtc/api/transport/webrtc_key_value_config.h"
-#include "webrtc/api/units/data_rate.h"
-#include "webrtc/api/units/timestamp.h"
-#include "webrtc/rtc_base/experiments/field_trial_parser.h"
+#include "api/transport/webrtc_key_value_config.h"
+#include "api/units/data_rate.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 
 namespace webrtc {
 

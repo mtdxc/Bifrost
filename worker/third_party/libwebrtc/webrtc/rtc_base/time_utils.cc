@@ -18,10 +18,10 @@
 #include <sys/timeb.h>
 #endif
 
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/numerics/safe_conversions.h"
-#include "webrtc/rtc_base/system_time.h"
-#include "webrtc/rtc_base/time_utils.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/system_time.h"
+#include "rtc_base/time_utils.h"
 
 namespace rtc {
 

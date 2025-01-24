@@ -19,10 +19,10 @@
 
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
-#include "webrtc/api/media_types.h"
-#include "webrtc/api/priority.h"
-#include "webrtc/api/rtp_transceiver_direction.h"
-#include "webrtc/rtc_base/system/rtc_export.h"
+#include "api/media_types.h"
+#include "api/priority.h"
+#include "api/rtp_transceiver_direction.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 

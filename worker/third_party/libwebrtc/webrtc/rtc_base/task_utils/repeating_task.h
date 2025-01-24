@@ -15,12 +15,12 @@
 #include <type_traits>
 #include <utility>
 
-#include "webrtc/api/task_queue/queued_task.h"
-#include "webrtc/api/task_queue/task_queue_base.h"
-#include "webrtc/api/units/time_delta.h"
-#include "webrtc/api/units/timestamp.h"
-#include "webrtc/rtc_base/task_utils/pending_task_safety_flag.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "api/task_queue/queued_task.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/task_utils/pending_task_safety_flag.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 

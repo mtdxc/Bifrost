@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/congestion_controller/goog_cc/loss_based_bwe_v2.h"
+#include "modules/congestion_controller/goog_cc/loss_based_bwe_v2.h"
 
 #include <algorithm>
 #include <cmath>
@@ -20,16 +20,16 @@
 
 #include "absl/algorithm/container.h"
 #include "absl/types/optional.h"
-#include "webrtc/api/array_view.h"
-#include "webrtc/api/transport/network_types.h"
-#include "webrtc/api/transport/webrtc_key_value_config.h"
-#include "webrtc/api/units/data_rate.h"
-#include "webrtc/api/units/data_size.h"
-#include "webrtc/api/units/time_delta.h"
-#include "webrtc/api/units/timestamp.h"
-#include "webrtc/rtc_base/experiments/field_trial_list.h"
-#include "webrtc/rtc_base/experiments/field_trial_parser.h"
-#include "webrtc/rtc_base/logging.h"
+#include "api/array_view.h"
+#include "api/transport/network_types.h"
+#include "api/transport/webrtc_key_value_config.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/experiments/field_trial_list.h"
+#include "rtc_base/experiments/field_trial_parser.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 

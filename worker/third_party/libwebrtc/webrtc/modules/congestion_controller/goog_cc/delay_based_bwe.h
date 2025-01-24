@@ -18,16 +18,16 @@
 #include <vector>
 
 #include "absl/types/optional.h"
-#include "webrtc/api/network_state_predictor.h"
-#include "webrtc/api/transport/network_types.h"
-#include "webrtc/api/transport/webrtc_key_value_config.h"
-#include "webrtc/modules/congestion_controller/goog_cc/delay_increase_detector_interface.h"
-#include "webrtc/modules/congestion_controller/goog_cc/inter_arrival_delta.h"
-#include "webrtc/modules/congestion_controller/goog_cc/probe_bitrate_estimator.h"
-#include "webrtc/modules/remote_bitrate_estimator/aimd_rate_control.h"
-#include "webrtc/modules/remote_bitrate_estimator/inter_arrival.h"
-#include "webrtc/rtc_base/experiments/struct_parameters_parser.h"
-#include "webrtc/rtc_base/race_checker.h"
+#include "api/network_state_predictor.h"
+#include "api/transport/network_types.h"
+#include "api/transport/webrtc_key_value_config.h"
+#include "modules/congestion_controller/goog_cc/delay_increase_detector_interface.h"
+#include "modules/congestion_controller/goog_cc/inter_arrival_delta.h"
+#include "modules/congestion_controller/goog_cc/probe_bitrate_estimator.h"
+#include "modules/remote_bitrate_estimator/aimd_rate_control.h"
+#include "modules/remote_bitrate_estimator/inter_arrival.h"
+#include "rtc_base/experiments/struct_parameters_parser.h"
+#include "rtc_base/race_checker.h"
 
 namespace webrtc {
 

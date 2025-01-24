@@ -18,12 +18,12 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/transport/field_trial_based_config.h"
-#include "webrtc/modules/remote_bitrate_estimator/aimd_rate_control.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
-#include "webrtc/rtc_base/rate_statistics.h"
-#include "webrtc/rtc_base/synchronization/mutex.h"
-#include "webrtc/rtc_base/thread_annotations.h"
+#include "api/transport/field_trial_based_config.h"
+#include "modules/remote_bitrate_estimator/aimd_rate_control.h"
+#include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
+#include "rtc_base/rate_statistics.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 

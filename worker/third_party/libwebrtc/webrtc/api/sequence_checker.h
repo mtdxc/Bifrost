@@ -10,9 +10,9 @@
 #ifndef API_SEQUENCE_CHECKER_H_
 #define API_SEQUENCE_CHECKER_H_
 
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/synchronization/sequence_checker_internal.h"
-#include "webrtc/rtc_base/thread_annotations.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/synchronization/sequence_checker_internal.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 

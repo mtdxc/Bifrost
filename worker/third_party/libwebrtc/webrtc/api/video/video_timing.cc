@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/video/video_timing.h"
+#include "api/video/video_timing.h"
 
-#include "webrtc/api/array_view.h"
-#include "webrtc/rtc_base/logging.h"
-#include "webrtc/rtc_base/numerics/safe_conversions.h"
-#include "webrtc/rtc_base/strings/string_builder.h"
+#include "api/array_view.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 

@@ -15,10 +15,10 @@
 #include <vector>
 
 #include "absl/types/optional.h"
-#include "webrtc/api/units/data_rate.h"
-#include "webrtc/api/units/data_size.h"
-#include "webrtc/api/units/time_delta.h"
-#include "webrtc/api/units/timestamp.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 
 namespace webrtc {
 

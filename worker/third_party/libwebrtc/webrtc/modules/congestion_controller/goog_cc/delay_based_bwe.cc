@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/congestion_controller/goog_cc/delay_based_bwe.h"
+#include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -18,13 +18,13 @@
 #include <utility>
 
 #include "absl/strings/match.h"
-#include "webrtc/api/units/time_delta.h"
-#include "webrtc/modules/congestion_controller/goog_cc/trendline_estimator.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/bwe_defines.h"
+#include "api/units/time_delta.h"
+#include "modules/congestion_controller/goog_cc/trendline_estimator.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 /* #include "modules/remote_bitrate_estimator/test/bwe_test_logging.h" */
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/logging.h"
-#include "webrtc/system_wrappers/include/metrics.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 namespace {

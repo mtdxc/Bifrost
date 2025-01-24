@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/congestion_controller/goog_cc/probe_controller.h"
+#include "modules/congestion_controller/goog_cc/probe_controller.h"
 
 #include <algorithm>
 #include <initializer_list>
@@ -16,13 +16,13 @@
 #include <string>
 
 #include "absl/strings/match.h"
-#include "webrtc/api/units/data_rate.h"
-#include "webrtc/api/units/time_delta.h"
-#include "webrtc/api/units/timestamp.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/logging.h"
-#include "webrtc/rtc_base/numerics/safe_conversions.h"
-#include "webrtc/system_wrappers/include/metrics.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 

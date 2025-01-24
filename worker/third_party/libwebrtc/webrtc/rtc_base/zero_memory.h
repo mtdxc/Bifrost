@@ -15,7 +15,7 @@
 
 #include <type_traits>
 
-#include "webrtc/api/array_view.h"
+#include "api/array_view.h"
 
 namespace rtc {
 

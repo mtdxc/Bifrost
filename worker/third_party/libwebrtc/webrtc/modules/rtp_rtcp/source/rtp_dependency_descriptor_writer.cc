@@ -7,7 +7,7 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/modules/rtp_rtcp/source/rtp_dependency_descriptor_writer.h"
+#include "modules/rtp_rtcp/source/rtp_dependency_descriptor_writer.h"
 
 #include <bitset>
 #include <cstddef>
@@ -16,10 +16,10 @@
 #include <vector>
 
 #include "absl/algorithm/container.h"
-#include "webrtc/api/array_view.h"
-#include "webrtc/api/transport/rtp/dependency_descriptor.h"
-#include "webrtc/rtc_base/bit_buffer.h"
-#include "webrtc/rtc_base/checks.h"
+#include "api/array_view.h"
+#include "api/transport/rtp/dependency_descriptor.h"
+#include "rtc_base/bit_buffer.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace {

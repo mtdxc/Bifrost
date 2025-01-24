@@ -17,12 +17,12 @@
 #include <utility>
 
 #include "absl/memory/memory.h"
-#include "webrtc/api/task_queue/queued_task.h"
-#include "webrtc/api/task_queue/task_queue_base.h"
-#include "webrtc/api/task_queue/task_queue_factory.h"
-#include "webrtc/rtc_base/system/rtc_export.h"
-#include "webrtc/rtc_base/task_utils/to_queued_task.h"
-#include "webrtc/rtc_base/thread_annotations.h"
+#include "api/task_queue/queued_task.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/task_queue/task_queue_factory.h"
+#include "rtc_base/system/rtc_export.h"
+#include "rtc_base/task_utils/to_queued_task.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace rtc {
 // Implements a task queue that asynchronously executes tasks in a way that

@@ -14,8 +14,8 @@
 #include <stdint.h>
 
 #include "absl/types/optional.h"
-#include "webrtc/api/video/hdr_metadata.h"
-#include "webrtc/rtc_base/system/rtc_export.h"
+#include "api/video/hdr_metadata.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 

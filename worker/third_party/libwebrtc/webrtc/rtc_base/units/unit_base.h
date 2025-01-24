@@ -17,8 +17,8 @@
 #include <limits>
 #include <type_traits>
 
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 namespace rtc_units_impl {

@@ -18,11 +18,11 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/scoped_refptr.h"
-#include "webrtc/modules/include/module_fec_types.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/forward_error_correction_internal.h"
-#include "webrtc/rtc_base/copy_on_write_buffer.h"
+#include "api/scoped_refptr.h"
+#include "modules/include/module_fec_types.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
+#include "rtc_base/copy_on_write_buffer.h"
 
 namespace webrtc {
 

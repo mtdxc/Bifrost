@@ -14,10 +14,10 @@
 #include <cstdint>
 
 #include "absl/strings/string_view.h"
-#include "webrtc/api/array_view.h"
-#include "webrtc/api/rtp_parameters.h"
-#include "webrtc/api/transport/rtp/dependency_descriptor.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "api/array_view.h"
+#include "api/rtp_parameters.h"
+#include "api/transport/rtp/dependency_descriptor.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {
 // Trait to read/write the dependency descriptor extension as described in
