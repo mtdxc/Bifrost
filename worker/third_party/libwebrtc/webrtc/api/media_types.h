@@ -13,7 +13,7 @@
 
 #include <string>
 
-#include "webrtc/rtc_base/system/rtc_export.h"
+#include "rtc_base/system/rtc_export.h"
 
 // The cricket and webrtc have separate definitions for what a media type is.
 // They're not compatible. Watch out for this.

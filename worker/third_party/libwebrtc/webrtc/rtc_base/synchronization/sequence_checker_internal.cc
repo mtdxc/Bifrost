@@ -7,7 +7,7 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/rtc_base/synchronization/sequence_checker_internal.h"
+#include "rtc_base/synchronization/sequence_checker_internal.h"
 
 #include <string>
 
@@ -15,8 +15,8 @@
 #include <dispatch/dispatch.h>
 #endif
 
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/strings/string_builder.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 namespace webrtc_sequence_checker_internal {

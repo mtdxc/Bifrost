@@ -14,8 +14,8 @@
 
 #include <deque>
 
-#include "webrtc/api/network_state_predictor.h"
-#include "webrtc/rtc_base/constructor_magic.h"
+#include "api/network_state_predictor.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 

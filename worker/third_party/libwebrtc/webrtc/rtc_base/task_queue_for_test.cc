@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/rtc_base/task_queue_for_test.h"
+#include "rtc_base/task_queue_for_test.h"
 
-#include "webrtc/api/task_queue/default_task_queue_factory.h"
+#include "api/task_queue/default_task_queue_factory.h"
 
 namespace webrtc {
 

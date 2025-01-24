@@ -13,9 +13,9 @@
 #include <type_traits>
 #include <utility>
 
-#include "webrtc/api/scoped_refptr.h"
-#include "webrtc/rtc_base/ref_count.h"
-#include "webrtc/rtc_base/ref_counter.h"
+#include "api/scoped_refptr.h"
+#include "rtc_base/ref_count.h"
+#include "rtc_base/ref_counter.h"
 
 namespace rtc {
 

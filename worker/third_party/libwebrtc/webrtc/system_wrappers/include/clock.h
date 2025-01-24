@@ -16,9 +16,9 @@
 #include <atomic>
 #include <memory>
 
-#include "webrtc/api/units/timestamp.h"
-#include "webrtc/rtc_base/system/rtc_export.h"
-#include "webrtc/system_wrappers/include/ntp_time.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/system/rtc_export.h"
+#include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
 

@@ -16,8 +16,8 @@
 
 #include "absl/base/attributes.h"
 /* #include "api/rtc_event_log/rtc_event_log.h" */
-#include "webrtc/api/transport/network_types.h"
-#include "webrtc/api/transport/webrtc_key_value_config.h"
+#include "api/transport/network_types.h"
+#include "api/transport/webrtc_key_value_config.h"
 
 namespace webrtc {
 

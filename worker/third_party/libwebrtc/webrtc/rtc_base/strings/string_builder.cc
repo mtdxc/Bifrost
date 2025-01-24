@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/rtc_base/strings/string_builder.h"
+#include "rtc_base/strings/string_builder.h"
 
 #include <stdarg.h>
 
 #include <cstdio>
 #include <cstring>
 
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/numerics/safe_minmax.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_minmax.h"
 
 namespace rtc {
 

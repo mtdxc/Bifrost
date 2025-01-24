@@ -20,9 +20,9 @@
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
-#include "webrtc/rtc_base/experiments/field_trial_parser.h"
-#include "webrtc/rtc_base/experiments/field_trial_units.h"
-#include "webrtc/rtc_base/string_encode.h"
+#include "rtc_base/experiments/field_trial_parser.h"
+#include "rtc_base/experiments/field_trial_units.h"
+#include "rtc_base/string_encode.h"
 
 namespace webrtc {
 namespace struct_parser_impl {

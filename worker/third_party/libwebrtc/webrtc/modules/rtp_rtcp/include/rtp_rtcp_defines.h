@@ -21,12 +21,12 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "absl/types/variant.h"
-#include "webrtc/api/array_view.h"
-#include "webrtc/api/audio_codecs/audio_format.h"
-#include "webrtc/api/rtp_headers.h"
-#include "webrtc/api/transport/network_types.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/remote_estimate.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "api/array_view.h"
+#include "api/audio_codecs/audio_format.h"
+#include "api/rtp_headers.h"
+#include "api/transport/network_types.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/remote_estimate.h"
+#include "system_wrappers/include/clock.h"
 
 #define RTCP_CNAME_SIZE 256  // RFC 3550 page 44, including null termination
 #define IP_PACKET_SIZE 1500  // we assume ethernet

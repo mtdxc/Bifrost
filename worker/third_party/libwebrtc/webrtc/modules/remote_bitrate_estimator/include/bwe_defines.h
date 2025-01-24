@@ -14,8 +14,8 @@
 #include <stdint.h>
 
 #include "absl/types/optional.h"
-#include "webrtc/api/network_state_predictor.h"
-#include "webrtc/api/units/data_rate.h"
+#include "api/network_state_predictor.h"
+#include "api/units/data_rate.h"
 
 namespace webrtc {
 

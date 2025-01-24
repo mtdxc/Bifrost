@@ -7,9 +7,9 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/rtc_base/task_queue.h"
+#include "rtc_base/task_queue.h"
 
-#include "webrtc/api/task_queue/task_queue_base.h"
+#include "api/task_queue/task_queue_base.h"
 
 namespace rtc {
 

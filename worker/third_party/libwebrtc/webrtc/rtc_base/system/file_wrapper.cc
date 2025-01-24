@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/rtc_base/system/file_wrapper.h"
-#include "webrtc/rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/system/file_wrapper.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 #include <cerrno>
 

@@ -12,9 +12,9 @@
 #define MODULES_RTP_RTCP_SOURCE_RTP_VIDEO_LAYERS_ALLOCATION_EXTENSION_H_
 
 #include "absl/strings/string_view.h"
-#include "webrtc/api/rtp_parameters.h"
-#include "webrtc/api/video/video_layers_allocation.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "api/rtp_parameters.h"
+#include "api/video/video_layers_allocation.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {
 

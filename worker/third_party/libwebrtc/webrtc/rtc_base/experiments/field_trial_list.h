@@ -15,8 +15,8 @@
 #include <string>
 #include <vector>
 
-#include "webrtc/rtc_base/experiments/field_trial_parser.h"
-#include "webrtc/rtc_base/string_encode.h"
+#include "rtc_base/experiments/field_trial_parser.h"
+#include "rtc_base/string_encode.h"
 
 // List support for field trial strings. FieldTrialList and FieldTrialStructList
 // are used similarly to the other FieldTrialParameters, but take a variable

@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/rtc_base/task_queue_stdlib.h"
+#include "rtc_base/task_queue_stdlib.h"
 
 #include <string.h>
 
@@ -19,15 +19,15 @@
 #include <utility>
 
 #include "absl/strings/string_view.h"
-#include "webrtc/api/task_queue/queued_task.h"
-#include "webrtc/api/task_queue/task_queue_base.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/event.h"
-#include "webrtc/rtc_base/logging.h"
-#include "webrtc/rtc_base/platform_thread.h"
-#include "webrtc/rtc_base/synchronization/mutex.h"
-#include "webrtc/rtc_base/thread_annotations.h"
-#include "webrtc/rtc_base/time_utils.h"
+#include "api/task_queue/queued_task.h"
+#include "api/task_queue/task_queue_base.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/event.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/platform_thread.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 namespace {

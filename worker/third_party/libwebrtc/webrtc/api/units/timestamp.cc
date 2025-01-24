@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/units/timestamp.h"
+#include "api/units/timestamp.h"
 
-#include "webrtc/api/array_view.h"
-#include "webrtc/rtc_base/strings/string_builder.h"
+#include "api/array_view.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 std::string ToString(Timestamp value) {

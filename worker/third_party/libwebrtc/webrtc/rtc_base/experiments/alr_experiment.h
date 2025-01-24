@@ -14,7 +14,7 @@
 #include <stdint.h>
 
 #include "absl/types/optional.h"
-#include "webrtc/api/transport/webrtc_key_value_config.h"
+#include "api/transport/webrtc_key_value_config.h"
 
 namespace webrtc {
 struct AlrExperimentSettings {

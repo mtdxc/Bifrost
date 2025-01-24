@@ -19,10 +19,10 @@
 #include <type_traits>
 #include <utility>
 
-#include "webrtc/api/array_view.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/type_traits.h"
-#include "webrtc/rtc_base/zero_memory.h"
+#include "api/array_view.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/type_traits.h"
+#include "rtc_base/zero_memory.h"
 
 namespace rtc {
 

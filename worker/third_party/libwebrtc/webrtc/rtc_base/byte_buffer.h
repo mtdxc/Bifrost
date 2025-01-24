@@ -16,8 +16,8 @@
 
 #include <string>
 
-#include "webrtc/rtc_base/buffer.h"
-#include "webrtc/rtc_base/byte_order.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/byte_order.h"
 
 // Reads/Writes from/to buffer using network byte order (big endian)
 namespace rtc {

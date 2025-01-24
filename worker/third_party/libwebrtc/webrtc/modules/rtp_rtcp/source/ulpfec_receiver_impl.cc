@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/ulpfec_receiver_impl.h"
+#include "modules/rtp_rtcp/source/ulpfec_receiver_impl.h"
 
 #include <memory>
 #include <utility>
 
-#include "webrtc/api/scoped_refptr.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet_received.h"
-#include "webrtc/rtc_base/logging.h"
-#include "webrtc/rtc_base/time_utils.h"
+#include "api/scoped_refptr.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 

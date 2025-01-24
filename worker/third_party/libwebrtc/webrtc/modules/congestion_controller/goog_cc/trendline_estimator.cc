@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/congestion_controller/goog_cc/trendline_estimator.h"
+#include "modules/congestion_controller/goog_cc/trendline_estimator.h"
 
 #include <math.h>
 
@@ -17,12 +17,12 @@
 
 #include "absl/strings/match.h"
 #include "absl/types/optional.h"
-#include "webrtc/api/network_state_predictor.h"
+#include "api/network_state_predictor.h"
 /* #include "modules/remote_bitrate_estimator/test/bwe_test_logging.h" */
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/experiments/struct_parameters_parser.h"
-#include "webrtc/rtc_base/logging.h"
-#include "webrtc/rtc_base/numerics/safe_minmax.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/experiments/struct_parameters_parser.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
 

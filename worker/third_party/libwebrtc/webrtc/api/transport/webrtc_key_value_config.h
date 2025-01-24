@@ -13,7 +13,7 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "webrtc/rtc_base/system/rtc_export.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 

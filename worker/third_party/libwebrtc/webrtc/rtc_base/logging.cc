@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/rtc_base/logging.h"
+#include "rtc_base/logging.h"
 
 #include <string.h>
 
@@ -42,14 +42,14 @@ static const int kMaxLogLineSize = 1024 - 60;
 #include <vector>
 
 #include "absl/base/attributes.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/platform_thread_types.h"
-#include "webrtc/rtc_base/string_encode.h"
-#include "webrtc/rtc_base/string_utils.h"
-#include "webrtc/rtc_base/strings/string_builder.h"
-#include "webrtc/rtc_base/synchronization/mutex.h"
-#include "webrtc/rtc_base/thread_annotations.h"
-#include "webrtc/rtc_base/time_utils.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/platform_thread_types.h"
+#include "rtc_base/string_encode.h"
+#include "rtc_base/string_utils.h"
+#include "rtc_base/strings/string_builder.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
+#include "rtc_base/time_utils.h"
 
 namespace rtc {
 namespace {

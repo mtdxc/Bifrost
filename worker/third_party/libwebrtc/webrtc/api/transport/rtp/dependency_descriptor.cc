@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/transport/rtp/dependency_descriptor.h"
+#include "api/transport/rtp/dependency_descriptor.h"
 
 #include "absl/container/inlined_vector.h"
 #include "absl/strings/string_view.h"
-#include "webrtc/rtc_base/checks.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

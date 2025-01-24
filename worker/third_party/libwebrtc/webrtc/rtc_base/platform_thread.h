@@ -16,7 +16,7 @@
 
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
-#include "webrtc/rtc_base/platform_thread_types.h"
+#include "rtc_base/platform_thread_types.h"
 
 namespace rtc {
 

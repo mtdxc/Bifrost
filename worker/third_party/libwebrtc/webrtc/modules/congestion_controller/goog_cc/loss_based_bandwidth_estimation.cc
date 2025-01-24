@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/congestion_controller/goog_cc/loss_based_bandwidth_estimation.h"
+#include "modules/congestion_controller/goog_cc/loss_based_bandwidth_estimation.h"
 
 #include <algorithm>
 #include <string>
 #include <vector>
 
 #include "absl/strings/match.h"
-#include "webrtc/api/units/data_rate.h"
-#include "webrtc/api/units/time_delta.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
 
 namespace webrtc {
 namespace {

@@ -11,7 +11,7 @@
 #define MODULES_CONGESTION_CONTROLLER_GOOG_CC_LINK_CAPACITY_ESTIMATOR_H_
 
 #include "absl/types/optional.h"
-#include "webrtc/api/units/data_rate.h"
+#include "api/units/data_rate.h"
 
 namespace webrtc {
 class LinkCapacityEstimator {

@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 #include <ctype.h>
 #include <string.h>
@@ -16,8 +16,8 @@
 #include <type_traits>
 
 #include "absl/algorithm/container.h"
-#include "webrtc/api/array_view.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet.h"
+#include "api/array_view.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
 
 namespace webrtc {
 

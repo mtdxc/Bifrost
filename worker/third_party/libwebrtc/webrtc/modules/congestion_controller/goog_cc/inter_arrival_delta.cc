@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/congestion_controller/goog_cc/inter_arrival_delta.h"
+#include "modules/congestion_controller/goog_cc/inter_arrival_delta.h"
 
 #include <algorithm>
 
-#include "webrtc/api/units/time_delta.h"
-#include "webrtc/api/units/timestamp.h"
-#include "webrtc/rtc_base/logging.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 

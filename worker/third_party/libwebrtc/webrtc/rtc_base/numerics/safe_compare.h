@@ -37,7 +37,7 @@
 #include <type_traits>
 #include <utility>
 
-#include "webrtc/rtc_base/type_traits.h"
+#include "rtc_base/type_traits.h"
 
 namespace rtc {
 

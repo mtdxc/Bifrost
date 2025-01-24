@@ -13,10 +13,10 @@
 
 #include <memory>
 
-#include "webrtc/api/array_view.h"
-#include "webrtc/api/rtp_parameters.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "api/array_view.h"
+#include "api/rtp_parameters.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace webrtc {
 

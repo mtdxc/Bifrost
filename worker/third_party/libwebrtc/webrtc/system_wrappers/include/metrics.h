@@ -17,8 +17,8 @@
 #include <memory>
 #include <string>
 
-#include "webrtc/rtc_base/atomic_ops.h"
-#include "webrtc/rtc_base/checks.h"
+#include "rtc_base/atomic_ops.h"
+#include "rtc_base/checks.h"
 
 #if defined(RTC_DISABLE_METRICS)
 #define RTC_METRICS_ENABLED 0

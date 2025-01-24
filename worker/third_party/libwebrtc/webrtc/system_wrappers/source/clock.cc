@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/system_wrappers/include/clock.h"
+#include "system_wrappers/include/clock.h"
 
-#include "webrtc/system_wrappers/include/field_trial.h"
+#include "system_wrappers/include/field_trial.h"
 
 #if defined(WEBRTC_WIN)
 
 // Windows needs to be included before mmsystem.h
-#include "rtc_base/win32.h"
-
+//#include "rtc_base/win32.h"
+#include <Windows.h>
 #include <mmsystem.h>
 
 
@@ -27,8 +27,8 @@
 
 #endif  // defined(WEBRTC_POSIX)
 
-#include "webrtc/rtc_base/synchronization/mutex.h"
-#include "webrtc/rtc_base/time_utils.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 namespace {

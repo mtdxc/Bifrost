@@ -15,9 +15,9 @@
 
 #include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"
-#include "webrtc/api/array_view.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/numerics/safe_conversions.h"
+#include "api/array_view.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 

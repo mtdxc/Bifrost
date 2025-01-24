@@ -13,7 +13,7 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "webrtc/api/transport/webrtc_key_value_config.h"
+#include "api/transport/webrtc_key_value_config.h"
 
 namespace webrtc {
 // Implementation using the field trial API fo the key value lookup.

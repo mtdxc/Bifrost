@@ -16,13 +16,13 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/transport/network_control.h"
-#include "webrtc/api/transport/webrtc_key_value_config.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
-#include "webrtc/modules/remote_bitrate_estimator/packet_arrival_map.h"
-#include "webrtc/rtc_base/experiments/field_trial_parser.h"
-#include "webrtc/rtc_base/numerics/sequence_number_util.h"
-#include "webrtc/rtc_base/synchronization/mutex.h"
+#include "api/transport/network_control.h"
+#include "api/transport/webrtc_key_value_config.h"
+#include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
+#include "modules/remote_bitrate_estimator/packet_arrival_map.h"
+#include "rtc_base/experiments/field_trial_parser.h"
+#include "rtc_base/numerics/sequence_number_util.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 

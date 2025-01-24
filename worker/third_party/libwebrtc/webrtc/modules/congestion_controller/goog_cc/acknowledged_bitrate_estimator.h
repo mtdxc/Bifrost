@@ -15,11 +15,11 @@
 #include <vector>
 
 #include "absl/types/optional.h"
-#include "webrtc/api/transport/network_types.h"
-#include "webrtc/api/transport/webrtc_key_value_config.h"
-#include "webrtc/api/units/data_rate.h"
-#include "webrtc/modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator_interface.h"
-#include "webrtc/modules/congestion_controller/goog_cc/bitrate_estimator.h"
+#include "api/transport/network_types.h"
+#include "api/transport/webrtc_key_value_config.h"
+#include "api/units/data_rate.h"
+#include "modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator_interface.h"
+#include "modules/congestion_controller/goog_cc/bitrate_estimator.h"
 
 namespace webrtc {
 

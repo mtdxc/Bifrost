@@ -14,7 +14,7 @@
 #include <cstdint>
 #include <limits>
 
-#include "webrtc/rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 

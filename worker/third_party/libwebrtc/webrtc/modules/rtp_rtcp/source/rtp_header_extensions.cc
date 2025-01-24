@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 
 #include <string.h>
 
@@ -16,12 +16,12 @@
 #include <cstdint>
 #include <limits>
 
-#include "webrtc/modules/rtp_rtcp/include/rtp_cvo.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/include/rtp_cvo.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
 // TODO(bug:9855) Move kNoSpatialIdx from vp9_globals.h to common_constants
-#include "webrtc/modules/video_coding/codecs/interface/common_constants.h"
-#include "webrtc/modules/video_coding/codecs/vp9/include/vp9_globals.h"
-#include "webrtc/rtc_base/checks.h"
+#include "modules/video_coding/codecs/interface/common_constants.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 // Absolute send time in RTP streams.

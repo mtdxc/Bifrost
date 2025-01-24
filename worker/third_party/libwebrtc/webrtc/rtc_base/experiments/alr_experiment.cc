@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/rtc_base/experiments/alr_experiment.h"
+#include "rtc_base/experiments/alr_experiment.h"
 
 #include <inttypes.h>
 #include <stdio.h>
 
 #include <string>
 
-#include "webrtc/api/transport/field_trial_based_config.h"
-#include "webrtc/rtc_base/logging.h"
+#include "api/transport/field_trial_based_config.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 

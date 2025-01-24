@@ -16,10 +16,10 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "webrtc/api/array_view.h"
-#include "webrtc/api/rtp_parameters.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/rtc_base/checks.h"
+#include "api/array_view.h"
+#include "api/rtp_parameters.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

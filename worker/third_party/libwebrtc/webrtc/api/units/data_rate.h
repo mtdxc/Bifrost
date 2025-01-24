@@ -19,11 +19,11 @@
 #include <string>
 #include <type_traits>
 
-#include "webrtc/api/units/data_size.h"
-#include "webrtc/api/units/frequency.h"
-#include "webrtc/api/units/time_delta.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/units/unit_base.h"
+#include "api/units/data_size.h"
+#include "api/units/frequency.h"
+#include "api/units/time_delta.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/units/unit_base.h"
 
 namespace webrtc {
 // DataRate is a class that represents a given data rate. This can be used to

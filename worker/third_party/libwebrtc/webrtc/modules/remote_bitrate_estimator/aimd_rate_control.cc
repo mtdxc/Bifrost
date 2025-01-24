@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/remote_bitrate_estimator/aimd_rate_control.h"
+#include "modules/remote_bitrate_estimator/aimd_rate_control.h"
 
 #include <inttypes.h>
 
@@ -18,14 +18,14 @@
 #include <string>
 
 #include "absl/strings/match.h"
-#include "webrtc/api/transport/network_types.h"
-#include "webrtc/api/units/data_rate.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/bwe_defines.h"
-#include "webrtc/modules/remote_bitrate_estimator/overuse_detector.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/experiments/field_trial_parser.h"
-#include "webrtc/rtc_base/logging.h"
-#include "webrtc/rtc_base/numerics/safe_minmax.h"
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
+#include "modules/remote_bitrate_estimator/overuse_detector.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/experiments/field_trial_parser.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
 namespace {

@@ -16,8 +16,8 @@
 #include <cstddef>
 #include <list>
 
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/numerics/percentile_filter.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/percentile_filter.h"
 
 namespace webrtc {
 

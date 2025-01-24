@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/explicit_key_value_config.h"
+#include "test/explicit_key_value_config.h"
 
-#include "webrtc/api/transport/webrtc_key_value_config.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/system_wrappers/include/field_trial.h"
+#include "api/transport/webrtc_key_value_config.h"
+#include "rtc_base/checks.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 namespace test {

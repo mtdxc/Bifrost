@@ -19,8 +19,8 @@
 
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/string_to_number.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/string_to_number.h"
 
 namespace rtc {
 

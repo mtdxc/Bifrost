@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/remote_bitrate_estimator/overuse_detector.h"
+#include "modules/remote_bitrate_estimator/overuse_detector.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -17,8 +17,8 @@
 #include <string>
 
 /* #include "modules/remote_bitrate_estimator/test/bwe_test_logging.h" */
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/numerics/safe_minmax.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
 

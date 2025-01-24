@@ -15,12 +15,12 @@
 #include <utility>
 
 #include "absl/base/attributes.h"
-#include "webrtc/api/array_view.h"
-#include "webrtc/api/ref_counted_base.h"
-#include "webrtc/api/rtp_headers.h"
-#include "webrtc/api/scoped_refptr.h"
-#include "webrtc/api/units/timestamp.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet.h"
+#include "api/array_view.h"
+#include "api/ref_counted_base.h"
+#include "api/rtp_headers.h"
+#include "api/scoped_refptr.h"
+#include "api/units/timestamp.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
 
 namespace webrtc {
 // Class to hold rtp packet with metadata for receiver side.

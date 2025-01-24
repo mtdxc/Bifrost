@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/rtc_base/platform_thread_types.h"
+#include "rtc_base/platform_thread_types.h"
 
 #if defined(WEBRTC_LINUX)
 #include <sys/prctl.h>
@@ -16,7 +16,7 @@
 #endif
 
 #if defined(WEBRTC_WIN)
-#include "webrtc/rtc_base/arraysize.h"
+#include "rtc_base/arraysize.h"
 
 // The SetThreadDescription API was brought in version 1607 of Windows 10.
 // For compatibility with various versions of winuser and avoid clashing with

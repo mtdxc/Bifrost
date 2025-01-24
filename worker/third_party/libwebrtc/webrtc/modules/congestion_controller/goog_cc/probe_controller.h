@@ -18,11 +18,11 @@
 
 #include "absl/base/attributes.h"
 #include "absl/types/optional.h"
-#include "webrtc/api/transport/network_control.h"
-#include "webrtc/api/transport/webrtc_key_value_config.h"
-#include "webrtc/api/units/data_rate.h"
-#include "webrtc/rtc_base/constructor_magic.h"
-#include "webrtc/rtc_base/experiments/field_trial_parser.h"
+#include "api/transport/network_control.h"
+#include "api/transport/webrtc_key_value_config.h"
+#include "api/units/data_rate.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 
 namespace webrtc {
 

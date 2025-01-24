@@ -11,11 +11,11 @@
 #ifndef RTC_BASE_TASK_UTILS_PENDING_TASK_SAFETY_FLAG_H_
 #define RTC_BASE_TASK_UTILS_PENDING_TASK_SAFETY_FLAG_H_
 
-#include "webrtc/api/ref_counted_base.h"
-#include "webrtc/api/scoped_refptr.h"
-#include "webrtc/api/sequence_checker.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/system/no_unique_address.h"
+#include "api/ref_counted_base.h"
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/system/no_unique_address.h"
 
 namespace webrtc {
 

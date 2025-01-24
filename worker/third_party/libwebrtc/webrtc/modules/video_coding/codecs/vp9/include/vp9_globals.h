@@ -16,8 +16,8 @@
 
 #include <stdint.h>
 
-#include "webrtc/modules/video_coding/codecs/interface/common_constants.h"
-#include "webrtc/rtc_base/checks.h"
+#include "modules/video_coding/codecs/interface/common_constants.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

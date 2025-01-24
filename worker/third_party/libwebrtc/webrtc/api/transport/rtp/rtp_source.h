@@ -14,8 +14,8 @@
 #include <stdint.h>
 
 #include "absl/types/optional.h"
-#include "webrtc/api/rtp_headers.h"
-#include "webrtc/rtc_base/checks.h"
+#include "api/rtp_headers.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

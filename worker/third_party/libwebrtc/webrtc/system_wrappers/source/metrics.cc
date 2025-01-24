@@ -7,13 +7,13 @@
 // be found in the AUTHORS file in the root of the source tree.
 //
 
-#include "webrtc/system_wrappers/include/metrics.h"
+#include "system_wrappers/include/metrics.h"
 
 #include <algorithm>
 
-#include "webrtc/rtc_base/constructor_magic.h"
-#include "webrtc/rtc_base/synchronization/mutex.h"
-#include "webrtc/rtc_base/thread_annotations.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 // Default implementation of histogram methods for WebRTC clients that do not
 // want to provide their own implementation.

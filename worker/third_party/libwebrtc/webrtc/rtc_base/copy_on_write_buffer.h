@@ -19,12 +19,12 @@
 #include <type_traits>
 #include <utility>
 
-#include "webrtc/api/scoped_refptr.h"
-#include "webrtc/rtc_base/buffer.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/ref_counted_object.h"
-#include "webrtc/rtc_base/system/rtc_export.h"
-#include "webrtc/rtc_base/type_traits.h"
+#include "api/scoped_refptr.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/ref_counted_object.h"
+#include "rtc_base/system/rtc_export.h"
+#include "rtc_base/type_traits.h"
 
 namespace rtc {
 

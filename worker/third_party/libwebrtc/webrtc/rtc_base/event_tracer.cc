@@ -7,7 +7,7 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/rtc_base/event_tracer.h"
+#include "rtc_base/event_tracer.h"
 
 #include <inttypes.h>
 #include <stdint.h>
@@ -17,17 +17,17 @@
 #include <string>
 #include <vector>
 
-#include "webrtc/api/sequence_checker.h"
-#include "webrtc/rtc_base/atomic_ops.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/event.h"
-#include "webrtc/rtc_base/logging.h"
-#include "webrtc/rtc_base/platform_thread.h"
-#include "webrtc/rtc_base/platform_thread_types.h"
-#include "webrtc/rtc_base/synchronization/mutex.h"
-#include "webrtc/rtc_base/thread_annotations.h"
-#include "webrtc/rtc_base/time_utils.h"
-#include "webrtc/rtc_base/trace_event.h"
+#include "api/sequence_checker.h"
+#include "rtc_base/atomic_ops.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/event.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/platform_thread.h"
+#include "rtc_base/platform_thread_types.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
+#include "rtc_base/time_utils.h"
+#include "rtc_base/trace_event.h"
 
 // This is a guesstimate that should be enough in most cases.
 static const size_t kEventLoggerArgsStrBufferInitialSize = 256;

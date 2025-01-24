@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/rtc_base/string_to_number.h"
+#include "rtc_base/string_to_number.h"
 
 #include <ctype.h>
 
 #include <cerrno>
 #include <cstdlib>
 
-#include "webrtc/rtc_base/checks.h"
+#include "rtc_base/checks.h"
 
 namespace rtc {
 namespace string_to_number_internal {

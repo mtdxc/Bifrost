@@ -34,12 +34,12 @@ else()
 endif()
 
 set(WEBRTC_SOURCE_DIR "webrtc")
-include_directories(deps/abseil-cpp/abseil-cpp .)
+include_directories(deps/abseil-cpp/abseil-cpp ${WEBRTC_SOURCE_DIR})
 
 file(GLOB_RECURSE WEBRTC_SOURCES "${WEBRTC_SOURCE_DIR}/*.c" "${WEBRTC_SOURCE_DIR}/*.cpp" "${WEBRTC_SOURCE_DIR}/*.cc")
 file(GLOB_RECURSE WEBRTC_HEADERS "${WEBRTC_SOURCE_DIR}/*.h")
 
-add_library(webrtc STATIC ${WEBRTC_SOURCES} )
+add_library(webrtc STATIC ${WEBRTC_SOURCES})
 
 target_include_directories(webrtc PUBLIC ${WEBRTC_SOURCE_DIR})
 

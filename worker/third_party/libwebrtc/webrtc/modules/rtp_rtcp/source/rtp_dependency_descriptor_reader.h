@@ -14,9 +14,9 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/array_view.h"
-#include "webrtc/api/transport/rtp/dependency_descriptor.h"
-#include "webrtc/rtc_base/bitstream_reader.h"
+#include "api/array_view.h"
+#include "api/transport/rtp/dependency_descriptor.h"
+#include "rtc_base/bitstream_reader.h"
 
 namespace webrtc {
 // Deserializes DependencyDescriptor rtp header extension.

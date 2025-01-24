@@ -14,7 +14,7 @@
 #include <cstdint>
 
 #include "absl/container/inlined_vector.h"
-#include "webrtc/api/units/data_rate.h"
+#include "api/units/data_rate.h"
 
 namespace webrtc {
 

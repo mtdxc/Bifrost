@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/fec_private_tables_bursty.h"
+#include "modules/rtp_rtcp/source/fec_private_tables_bursty.h"
 
 namespace {
 // clang-format off

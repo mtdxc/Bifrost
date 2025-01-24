@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/rtc_base/event.h"
+#include "rtc_base/event.h"
 
 #if defined(WEBRTC_WIN)
 #include <windows.h>
@@ -22,9 +22,9 @@
 #endif
 
 #include "absl/types/optional.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/synchronization/yield_policy.h"
-#include "webrtc/rtc_base/system/warn_current_thread_is_deadlocked.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/synchronization/yield_policy.h"
+#include "rtc_base/system/warn_current_thread_is_deadlocked.h"
 
 namespace rtc {
 

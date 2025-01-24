@@ -7,9 +7,9 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/api/units/frequency.h"
+#include "api/units/frequency.h"
 
-#include "webrtc/rtc_base/strings/string_builder.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 std::string ToString(Frequency value) {

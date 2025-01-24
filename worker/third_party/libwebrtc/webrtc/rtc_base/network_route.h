@@ -15,9 +15,9 @@
 
 #include <string>
 
-#include "webrtc/rtc_base/network_constants.h"
-#include "webrtc/rtc_base/strings/string_builder.h"
-#include "webrtc/rtc_base/system/inline.h"
+#include "rtc_base/network_constants.h"
+#include "rtc_base/strings/string_builder.h"
+#include "rtc_base/system/inline.h"
 
 // TODO(honghaiz): Make a directory that describes the interfaces and structs
 // the media code can rely on and the network code can implement, and both can

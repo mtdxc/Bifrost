@@ -7,7 +7,7 @@
 // be found in the AUTHORS file in the root of the source tree.
 //
 
-#include "webrtc/system_wrappers/include/field_trial.h"
+#include "system_wrappers/include/field_trial.h"
 
 #include <stddef.h>
 
@@ -15,9 +15,9 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/logging.h"
-#include "webrtc/rtc_base/string_encode.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/string_encode.h"
 
 // Simple field trial implementation, which allows client to
 // specify desired flags in InitFieldTrialsFromString.

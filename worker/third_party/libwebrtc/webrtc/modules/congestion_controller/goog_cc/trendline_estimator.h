@@ -17,11 +17,11 @@
 #include <memory>
 #include <utility>
 
-#include "webrtc/api/network_state_predictor.h"
-#include "webrtc/api/transport/webrtc_key_value_config.h"
-#include "webrtc/modules/congestion_controller/goog_cc/delay_increase_detector_interface.h"
-#include "webrtc/rtc_base/constructor_magic.h"
-#include "webrtc/rtc_base/experiments/struct_parameters_parser.h"
+#include "api/network_state_predictor.h"
+#include "api/transport/webrtc_key_value_config.h"
+#include "modules/congestion_controller/goog_cc/delay_increase_detector_interface.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/experiments/struct_parameters_parser.h"
 
 namespace webrtc {
 

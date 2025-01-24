@@ -18,8 +18,8 @@
 #include <string>
 #include <type_traits>
 
-#include "webrtc/api/units/time_delta.h"
-#include "webrtc/rtc_base/checks.h"
+#include "api/units/time_delta.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 // Timestamp represents the time that has passed since some unspecified epoch.

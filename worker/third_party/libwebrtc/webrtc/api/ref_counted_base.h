@@ -12,8 +12,8 @@
 
 #include <type_traits>
 
-#include "webrtc/rtc_base/constructor_magic.h"
-#include "webrtc/rtc_base/ref_counter.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/ref_counter.h"
 
 namespace rtc {
 

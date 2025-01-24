@@ -13,8 +13,8 @@
 #define API_TRANSPORT_DATA_CHANNEL_TRANSPORT_INTERFACE_H_
 
 #include "absl/types/optional.h"
-#include "webrtc/api/rtc_error.h"
-#include "webrtc/rtc_base/copy_on_write_buffer.h"
+#include "api/rtc_error.h"
+#include "rtc_base/copy_on_write_buffer.h"
 
 namespace webrtc {
 

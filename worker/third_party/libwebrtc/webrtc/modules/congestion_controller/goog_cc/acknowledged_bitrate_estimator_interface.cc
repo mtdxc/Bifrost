@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator_interface.h"
+#include "modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator_interface.h"
 
 #include <algorithm>
 
-#include "webrtc/modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator.h"
-#include "webrtc/modules/congestion_controller/goog_cc/robust_throughput_estimator.h"
-#include "webrtc/rtc_base/logging.h"
+#include "modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator.h"
+#include "modules/congestion_controller/goog_cc/robust_throughput_estimator.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 

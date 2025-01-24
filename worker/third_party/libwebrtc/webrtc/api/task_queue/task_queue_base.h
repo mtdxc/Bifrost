@@ -12,9 +12,9 @@
 
 #include <memory>
 
-#include "webrtc/api/task_queue/queued_task.h"
-#include "webrtc/rtc_base/system/rtc_export.h"
-#include "webrtc/rtc_base/thread_annotations.h"
+#include "api/task_queue/queued_task.h"
+#include "rtc_base/system/rtc_export.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 

@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/pacing/interval_budget.h"
+#include "modules/pacing/interval_budget.h"
 
 #include <algorithm>
 
-#include "webrtc/rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 namespace {

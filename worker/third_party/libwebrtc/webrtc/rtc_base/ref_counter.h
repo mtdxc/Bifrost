@@ -12,7 +12,7 @@
 
 #include <atomic>
 
-#include "webrtc/rtc_base/ref_count.h"
+#include "rtc_base/ref_count.h"
 
 namespace webrtc {
 namespace webrtc_impl {
