@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ABSL_BASE_INTERNAL_INLINE_VARIABLE_EMULATION_H_
-#define ABSL_BASE_INTERNAL_INLINE_VARIABLE_EMULATION_H_
+#ifndef ABSL_BASE_INTERNAL_INLINE_VARIABLE_H_
+#define ABSL_BASE_INTERNAL_INLINE_VARIABLE_H_
 
 #include <type_traits>
 
@@ -104,4 +104,4 @@
 
 #endif  // __cpp_inline_variables
 
-#endif  // ABSL_BASE_INTERNAL_INLINE_VARIABLE_EMULATION_H_
+#endif  // ABSL_BASE_INTERNAL_INLINE_VARIABLE_H_

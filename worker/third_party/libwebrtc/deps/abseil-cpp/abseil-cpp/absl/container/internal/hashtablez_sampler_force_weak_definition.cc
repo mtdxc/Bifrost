@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,11 +17,15 @@
 #include "absl/base/attributes.h"
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 namespace container_internal {
 
 // See hashtablez_sampler.h for details.
-extern "C" ABSL_ATTRIBUTE_WEAK const bool
-    kAbslContainerInternalSampleEverything = false;
+extern "C" ABSL_ATTRIBUTE_WEAK bool ABSL_INTERNAL_C_SYMBOL(
+    AbslContainerInternalSampleEverything)() {
+  return false;
+}
 
 }  // namespace container_internal
+ABSL_NAMESPACE_END
 }  // namespace absl

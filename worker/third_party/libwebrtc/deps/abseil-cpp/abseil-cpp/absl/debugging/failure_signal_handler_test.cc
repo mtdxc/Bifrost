@@ -5,7 +5,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,14 +22,18 @@
 #include <cstring>
 #include <fstream>
 
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/base/internal/raw_logging.h"
 #include "absl/debugging/stacktrace.h"
 #include "absl/debugging/symbolize.h"
+#include "absl/log/check.h"
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
 
 namespace {
+
+using testing::StartsWith;
 
 #if GTEST_HAS_DEATH_TEST
 
@@ -52,7 +56,7 @@ TEST_P(FailureSignalHandlerDeathTest, AbslFailureSignal) {
               exit_regex);
 #else
   // Windows doesn't have testing::KilledBySignal().
-  EXPECT_DEATH(InstallHandlerAndRaise(signo), exit_regex);
+  EXPECT_DEATH_IF_SUPPORTED(InstallHandlerAndRaise(signo), exit_regex);
 #endif
 }
 
@@ -84,7 +88,7 @@ std::string GetTmpDir() {
 // This function runs in a fork()ed process on most systems.
 void InstallHandlerWithWriteToFileAndRaise(const char* file, int signo) {
   error_file = fopen(file, "w");
-  ABSL_RAW_CHECK(error_file != nullptr, "Failed create error_file");
+  CHECK_NE(error_file, nullptr) << "Failed create error_file";
   absl::FailureSignalHandlerOptions options;
   options.writerfn = WriteToErrorFile;
   absl::InstallFailureSignalHandler(options);
@@ -104,8 +108,8 @@ TEST_P(FailureSignalHandlerDeathTest, AbslFatalSignalsWithWriterFn) {
               testing::KilledBySignal(signo), exit_regex);
 #else
   // Windows doesn't have testing::KilledBySignal().
-  EXPECT_DEATH(InstallHandlerWithWriteToFileAndRaise(file.c_str(), signo),
-               exit_regex);
+  EXPECT_DEATH_IF_SUPPORTED(
+      InstallHandlerWithWriteToFileAndRaise(file.c_str(), signo), exit_regex);
 #endif
 
   // Open the file in this process and check its contents.
@@ -113,15 +117,21 @@ TEST_P(FailureSignalHandlerDeathTest, AbslFatalSignalsWithWriterFn) {
   ASSERT_TRUE(error_output.is_open()) << file;
   std::string error_line;
   std::getline(error_output, error_line);
-  EXPECT_TRUE(absl::StartsWith(
+  EXPECT_THAT(
       error_line,
-      absl::StrCat("*** ",
-                   absl::debugging_internal::FailureSignalToString(signo),
-                   " received at ")));
+      StartsWith(absl::StrCat(
+          "*** ", absl::debugging_internal::FailureSignalToString(signo),
+          " received at ")));
+
+  // On platforms where it is possible to get the current CPU, the
+  // CPU number is also logged. Check that it is present in output.
+#if defined(__linux__)
+  EXPECT_THAT(error_line, testing::HasSubstr(" on cpu "));
+#endif
 
   if (absl::debugging_internal::StackTraceWorksForTest()) {
     std::getline(error_output, error_line);
-    EXPECT_TRUE(absl::StartsWith(error_line, "PC: "));
+    EXPECT_THAT(error_line, StartsWith("PC: "));
   }
 }
 
@@ -133,7 +143,8 @@ constexpr int kFailureSignals[] = {
 };
 
 std::string SignalParamToString(const ::testing::TestParamInfo<int>& info) {
-  std::string result = absl::debugging_internal::FailureSignalToString(info.param);
+  std::string result =
+      absl::debugging_internal::FailureSignalToString(info.param);
   if (result.empty()) {
     result = absl::StrCat(info.param);
   }

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,7 @@
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "absl/base/internal/raw_logging.h"
+#include "absl/log/check.h"
 #include "absl/strings/str_cat.h"
 
 using absl::chars_format;
@@ -56,14 +56,14 @@ void ExpectParsedFloat(std::string s, absl::chars_format format_flags,
     begin_subrange = static_cast<int>(open_bracket_pos);
     s.replace(open_bracket_pos, 1, "");
     std::string::size_type close_bracket_pos = s.find(']');
-    ABSL_RAW_CHECK(close_bracket_pos != absl::string_view::npos,
-                   "Test input contains [ without matching ]");
+    CHECK_NE(close_bracket_pos, absl::string_view::npos)
+        << "Test input contains [ without matching ]";
     end_subrange = static_cast<int>(close_bracket_pos);
     s.replace(close_bracket_pos, 1, "");
   }
   const std::string::size_type expected_characters_matched = s.find('$');
-  ABSL_RAW_CHECK(expected_characters_matched != std::string::npos,
-                 "Input std::string must contain $");
+  CHECK_NE(expected_characters_matched, std::string::npos)
+      << "Input string must contain $";
   s.replace(expected_characters_matched, 1, "");
 
   ParsedFloat parsed =

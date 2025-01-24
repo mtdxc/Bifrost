@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,10 @@
 #ifndef ABSL_BASE_INTERNAL_EXCEPTION_SAFETY_TESTING_H_
 #define ABSL_BASE_INTERNAL_EXCEPTION_SAFETY_TESTING_H_
 
+#include "absl/base/config.h"
+
+#ifdef ABSL_HAVE_EXCEPTIONS
+
 #include <cstddef>
 #include <cstdint>
 #include <functional>
@@ -27,7 +31,6 @@
 #include <unordered_map>
 
 #include "gtest/gtest.h"
-#include "absl/base/config.h"
 #include "absl/base/internal/pretty_function.h"
 #include "absl/memory/memory.h"
 #include "absl/meta/type_traits.h"
@@ -169,8 +172,10 @@ class ConstructorTracker {
     return current_tracker_instance_ != nullptr;
   }
 
-  static std::string ErrorMessage(void* address, const std::string& address_description,
-                             int countdown, const std::string& error_description) {
+  static std::string ErrorMessage(void* address,
+                                  const std::string& address_description,
+                                  int countdown,
+                                  const std::string& error_description) {
     return absl::Substitute(
         "With coundtown at $0:\n"
         "  $1\n"
@@ -531,7 +536,22 @@ class ThrowingValue : private exceptions_internal::TrackedObject {
   }
 
   // Memory management operators
-  // Args.. allows us to overload regular and placement new in one shot
+  static void* operator new(size_t s) noexcept(
+      IsSpecified(TypeSpec::kNoThrowNew)) {
+    if (!IsSpecified(TypeSpec::kNoThrowNew)) {
+      exceptions_internal::MaybeThrow(ABSL_PRETTY_FUNCTION, true);
+    }
+    return ::operator new(s);
+  }
+
+  static void* operator new[](size_t s) noexcept(
+      IsSpecified(TypeSpec::kNoThrowNew)) {
+    if (!IsSpecified(TypeSpec::kNoThrowNew)) {
+      exceptions_internal::MaybeThrow(ABSL_PRETTY_FUNCTION, true);
+    }
+    return ::operator new[](s);
+  }
+
   template <typename... Args>
   static void* operator new(size_t s, Args&&... args) noexcept(
       IsSpecified(TypeSpec::kNoThrowNew)) {
@@ -552,12 +572,6 @@ class ThrowingValue : private exceptions_internal::TrackedObject {
 
   // Abseil doesn't support throwing overloaded operator delete.  These are
   // provided so a throwing operator-new can clean up after itself.
-  //
-  // We provide both regular and templated operator delete because if only the
-  // templated version is provided as we did with operator new, the compiler has
-  // no way of knowing which overload of operator delete to call. See
-  // http://en.cppreference.com/w/cpp/memory/new/operator_delete and
-  // http://en.cppreference.com/w/cpp/language/delete for the gory details.
   void operator delete(void* p) noexcept { ::operator delete(p); }
 
   template <typename... Args>
@@ -721,9 +735,8 @@ class ThrowingAllocator : private exceptions_internal::TrackedObject {
 
   ThrowingAllocator select_on_container_copy_construction() noexcept(
       IsSpecified(AllocSpec::kNoThrowAllocate)) {
-    auto& out = *this;
     ReadStateAndMaybeThrow(ABSL_PRETTY_FUNCTION);
-    return out;
+    return *this;
   }
 
   template <typename U>
@@ -933,7 +946,7 @@ class ExceptionSafetyTest {
  *   `std::unique_ptr<T> operator()() const` where T is the type being tested.
  *   It is used for reliably creating identical T instances to test on.
  *
- * - Operation: The operation object (passsed in via tester.WithOperation(...)
+ * - Operation: The operation object (passed in via tester.WithOperation(...)
  *   or tester.Test(...)) must be invocable with the signature
  *   `void operator()(T*) const` where T is the type being tested. It is used
  *   for performing steps on a T instance that may throw and that need to be
@@ -1090,5 +1103,7 @@ class ExceptionSafetyTestBuilder {
 }  // namespace exceptions_internal
 
 }  // namespace testing
+
+#endif  // ABSL_HAVE_EXCEPTIONS
 
 #endif  // ABSL_BASE_INTERNAL_EXCEPTION_SAFETY_TESTING_H_

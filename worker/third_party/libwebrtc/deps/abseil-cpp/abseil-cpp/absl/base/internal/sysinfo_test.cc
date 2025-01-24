@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,24 +28,13 @@
 #include "absl/synchronization/mutex.h"
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 namespace base_internal {
 namespace {
 
 TEST(SysinfoTest, NumCPUs) {
   EXPECT_NE(NumCPUs(), 0)
       << "NumCPUs() should not have the default value of 0";
-}
-
-TEST(SysinfoTest, NominalCPUFrequency) {
-#if !(defined(__aarch64__) && defined(__linux__))
-  EXPECT_GE(NominalCPUFrequency(), 1000.0)
-      << "NominalCPUFrequency() did not return a reasonable value";
-#else
-  // TODO(absl-team): Aarch64 cannot read the CPU frequency from sysfs, so we
-  // get back 1.0. Fix once the value is available.
-  EXPECT_EQ(NominalCPUFrequency(), 1.0)
-      << "CPU frequency detection was fixed! Please update unittest.";
-#endif
 }
 
 TEST(SysinfoTest, GetTID) {
@@ -58,8 +47,8 @@ TEST(SysinfoTest, GetTID) {
 #endif
   // Test that TIDs are unique to each thread.
   // Uses a few loops to exercise implementations that reallocate IDs.
-  for (int i = 0; i < 32; ++i) {
-    constexpr int kNumThreads = 64;
+  for (int i = 0; i < 10; ++i) {
+    constexpr int kNumThreads = 10;
     Barrier all_threads_done(kNumThreads);
     std::vector<std::thread> threads;
 
@@ -95,4 +84,5 @@ TEST(SysinfoTest, LinuxGetTID) {
 
 }  // namespace
 }  // namespace base_internal
+ABSL_NAMESPACE_END
 }  // namespace absl

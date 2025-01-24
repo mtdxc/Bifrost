@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,10 @@
 #if defined(ABSL_HAVE_ALARM)
 #include <signal.h>
 #include <unistd.h>
+#ifdef _AIX
+// sig_t is not defined in AIX.
+typedef void (*sig_t)(int);
+#endif
 #elif defined(__linux__) || defined(__APPLE__)
 #error all known Linux and Apple targets have alarm
 #endif

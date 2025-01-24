@@ -5,7 +5,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+#      https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,17 +17,29 @@
 load(
     "//absl:copts/configure_copts.bzl",
     "ABSL_DEFAULT_COPTS",
+    "ABSL_DEFAULT_LINKOPTS",
     "ABSL_TEST_COPTS",
 )
 
-package(default_visibility = ["//visibility:public"])
+package(
+    default_visibility = ["//visibility:public"],
+    features = [
+        "header_modules",
+        "layering_check",
+        "parse_headers",
+    ],
+)
 
-licenses(["notice"])  # Apache 2.0
+licenses(["notice"])
 
 cc_library(
     name = "algorithm",
     hdrs = ["algorithm.h"],
     copts = ABSL_DEFAULT_COPTS,
+    linkopts = ABSL_DEFAULT_LINKOPTS,
+    deps = [
+        "//absl/base:config",
+    ],
 )
 
 cc_test(
@@ -35,21 +47,12 @@ cc_test(
     size = "small",
     srcs = ["algorithm_test.cc"],
     copts = ABSL_TEST_COPTS,
+    linkopts = ABSL_DEFAULT_LINKOPTS,
     deps = [
         ":algorithm",
+        "//absl/base:config",
+        "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
-    ],
-)
-
-cc_test(
-    name = "algorithm_benchmark",
-    srcs = ["equal_benchmark.cc"],
-    copts = ABSL_TEST_COPTS,
-    tags = ["benchmark"],
-    deps = [
-        ":algorithm",
-        "//absl/base:core_headers",
-        "@com_github_google_benchmark//:benchmark_main",
     ],
 )
 
@@ -59,9 +62,11 @@ cc_library(
         "container.h",
     ],
     copts = ABSL_DEFAULT_COPTS,
+    linkopts = ABSL_DEFAULT_LINKOPTS,
     deps = [
         ":algorithm",
         "//absl/base:core_headers",
+        "//absl/base:nullability",
         "//absl/meta:type_traits",
     ],
 )
@@ -70,12 +75,14 @@ cc_test(
     name = "container_test",
     srcs = ["container_test.cc"],
     copts = ABSL_TEST_COPTS,
+    linkopts = ABSL_DEFAULT_LINKOPTS,
     deps = [
         ":container",
         "//absl/base",
         "//absl/base:core_headers",
         "//absl/memory",
         "//absl/types:span",
+        "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
     ],
 )
