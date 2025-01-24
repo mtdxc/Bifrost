@@ -1,15 +1,26 @@
 cmake_minimum_required(VERSION 2.6)
-find_package(PkgConfig)
-#functions
-function(test_lib LIB_NAME)
-  if (${LIB_NAME} MATCHES "^.*-NOTFOUND")
-    message(FATAL_ERROR "lib not found: " ${LIB_NAME} " check README")
-    return()
-  endif(${LIB_NAME} MATCHES "^.*-NOTFOUND")
-endfunction(test_lib)
 project (WEBRTC)
+find_package(PkgConfig)
 
-set (WEBRTC_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMakeTargets")
+function(set_file_group prefix)
+  message(STATUS "set_file_group " ${prefix} " " ${ARGC})
+  foreach(FILE IN LISTS ARGN 1)
+    # Get the directory of the source file
+    get_filename_component(PARENT_DIR "${FILE}" DIRECTORY)
+
+    # Remove common directory prefix to make the group
+    string(REPLACE "${prefix}" "" GROUP "${PARENT_DIR}")
+
+    # Make sure we are using windows slashes
+    string(REPLACE "/" "\\" GROUP "${GROUP}")
+
+    source_group("${GROUP}" FILES "${FILE}")
+  endforeach()
+endfunction()
+
+set (WEBRTC_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/webrtc)
 
 set(CMAKE_CXX_FLAGS "-g -Wall -std=c++17")
 if(MSVC)
@@ -33,13 +44,14 @@ else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -DWEBRTC_POSIX -DWEBRTC_LINUX")
 endif()
 
-set(WEBRTC_SOURCE_DIR "webrtc")
 include_directories(deps/abseil-cpp/abseil-cpp ${WEBRTC_SOURCE_DIR})
 
 file(GLOB_RECURSE WEBRTC_SOURCES "${WEBRTC_SOURCE_DIR}/*.c" "${WEBRTC_SOURCE_DIR}/*.cpp" "${WEBRTC_SOURCE_DIR}/*.cc")
 file(GLOB_RECURSE WEBRTC_HEADERS "${WEBRTC_SOURCE_DIR}/*.h")
 
-add_library(webrtc STATIC ${WEBRTC_SOURCES})
+set_file_group("${WEBRTC_SOURCE_DIR}" ${WEBRTC_SOURCES})
+set_file_group("${WEBRTC_SOURCE_DIR}" ${WEBRTC_HEADERS})
+add_library(webrtc STATIC ${WEBRTC_SOURCES} ${WEBRTC_HEADERS})
 
 target_include_directories(webrtc PUBLIC ${WEBRTC_SOURCE_DIR})
 
