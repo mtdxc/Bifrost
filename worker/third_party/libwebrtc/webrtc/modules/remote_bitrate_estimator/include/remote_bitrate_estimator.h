@@ -17,10 +17,10 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/modules/include/module.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet.h"
+#include "modules/include/module.h"
+#include "modules/include/module_common_types.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
 
 namespace webrtc {
 

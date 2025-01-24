@@ -7,7 +7,7 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/rtc_base/experiments/field_trial_list.h"
+#include "rtc_base/experiments/field_trial_list.h"
 
 namespace webrtc {
 

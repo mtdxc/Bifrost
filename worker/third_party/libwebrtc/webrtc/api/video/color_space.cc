@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/video/color_space.h"
+#include "api/video/color_space.h"
 
 namespace webrtc {
 namespace {

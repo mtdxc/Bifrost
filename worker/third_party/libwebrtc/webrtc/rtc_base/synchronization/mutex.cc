@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/rtc_base/synchronization/mutex.h"
+#include "rtc_base/synchronization/mutex.h"
 
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/synchronization/yield.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/synchronization/yield.h"
 
 namespace webrtc {
 

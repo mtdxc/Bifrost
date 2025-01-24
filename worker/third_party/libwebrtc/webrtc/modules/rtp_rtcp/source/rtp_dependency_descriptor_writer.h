@@ -15,9 +15,9 @@
 #include <cstdint>
 #include <vector>
 
-#include "webrtc/api/array_view.h"
-#include "webrtc/api/transport/rtp/dependency_descriptor.h"
-#include "webrtc/rtc_base/bit_buffer.h"
+#include "api/array_view.h"
+#include "api/transport/rtp/dependency_descriptor.h"
+#include "rtc_base/bit_buffer.h"
 
 namespace webrtc {
 class RtpDependencyDescriptorWriter {

@@ -10,10 +10,10 @@
 #ifndef RTC_BASE_EXPERIMENTS_FIELD_TRIAL_UNITS_H_
 #define RTC_BASE_EXPERIMENTS_FIELD_TRIAL_UNITS_H_
 
-#include "webrtc/api/units/data_rate.h"
-#include "webrtc/api/units/data_size.h"
-#include "webrtc/api/units/time_delta.h"
-#include "webrtc/rtc_base/experiments/field_trial_parser.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 
 namespace webrtc {
 

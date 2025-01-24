@@ -16,8 +16,8 @@
 #include <utility>
 
 #include "absl/strings/string_view.h"
-#include "webrtc/api/array_view.h"
-#include "webrtc/rtc_base/string_encode.h"
+#include "api/array_view.h"
+#include "rtc_base/string_encode.h"
 
 namespace rtc {
 

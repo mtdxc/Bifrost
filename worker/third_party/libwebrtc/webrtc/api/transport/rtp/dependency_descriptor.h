@@ -20,7 +20,7 @@
 #include "absl/container/inlined_vector.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
-#include "webrtc/api/video/render_resolution.h"
+#include "api/video/render_resolution.h"
 
 namespace webrtc {
 // Structures to build and parse dependency descriptor as described in

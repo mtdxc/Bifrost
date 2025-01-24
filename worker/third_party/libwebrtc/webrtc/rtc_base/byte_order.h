@@ -17,7 +17,7 @@
 #include <arpa/inet.h>
 #endif
 
-#include "webrtc/rtc_base/system/arch.h"
+#include "rtc_base/system/arch.h"
 
 #if defined(WEBRTC_MAC)
 #include <libkern/OSByteOrder.h>

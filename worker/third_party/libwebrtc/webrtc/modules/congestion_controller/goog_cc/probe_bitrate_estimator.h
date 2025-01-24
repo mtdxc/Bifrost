@@ -15,8 +15,8 @@
 #include <map>
 
 #include "absl/types/optional.h"
-#include "webrtc/api/transport/network_types.h"
-#include "webrtc/api/units/data_rate.h"
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
 
 namespace webrtc {
 

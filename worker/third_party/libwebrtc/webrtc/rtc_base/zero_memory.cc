@@ -14,8 +14,8 @@
 #include <string.h>
 #endif
 
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/zero_memory.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/zero_memory.h"
 
 namespace rtc {
 

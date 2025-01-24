@@ -15,8 +15,8 @@
 #include <type_traits>
 #include <utility>
 
-#include "webrtc/api/task_queue/queued_task.h"
-#include "webrtc/rtc_base/task_utils/pending_task_safety_flag.h"
+#include "api/task_queue/queued_task.h"
+#include "rtc_base/task_utils/pending_task_safety_flag.h"
 
 namespace webrtc {
 namespace webrtc_new_closure_impl {

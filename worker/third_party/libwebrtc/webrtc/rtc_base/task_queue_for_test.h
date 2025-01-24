@@ -14,13 +14,13 @@
 #include <utility>
 
 #include "absl/strings/string_view.h"
-#include "webrtc/api/task_queue/task_queue_base.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/event.h"
-#include "webrtc/rtc_base/location.h"
-#include "webrtc/rtc_base/task_queue.h"
-#include "webrtc/rtc_base/task_utils/to_queued_task.h"
-#include "webrtc/rtc_base/thread_annotations.h"
+#include "api/task_queue/task_queue_base.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/event.h"
+#include "rtc_base/location.h"
+#include "rtc_base/task_queue.h"
+#include "rtc_base/task_utils/to_queued_task.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 

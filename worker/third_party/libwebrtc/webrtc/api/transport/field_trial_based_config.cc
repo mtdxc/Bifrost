@@ -7,9 +7,9 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/api/transport/field_trial_based_config.h"
+#include "api/transport/field_trial_based_config.h"
 
-#include "webrtc/system_wrappers/include/field_trial.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 std::string FieldTrialBasedConfig::Lookup(absl::string_view key) const {

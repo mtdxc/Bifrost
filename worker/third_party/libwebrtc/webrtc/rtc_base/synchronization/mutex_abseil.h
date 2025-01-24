@@ -13,7 +13,7 @@
 
 #include "absl/base/attributes.h"
 #include "absl/synchronization/mutex.h"
-#include "webrtc/rtc_base/thread_annotations.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 

@@ -16,8 +16,8 @@
 #include <iterator>
 #include <type_traits>
 
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/type_traits.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/type_traits.h"
 
 namespace rtc {
 

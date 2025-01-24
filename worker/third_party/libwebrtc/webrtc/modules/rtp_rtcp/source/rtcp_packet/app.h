@@ -14,8 +14,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet.h"
-#include "webrtc/rtc_base/buffer.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
+#include "rtc_base/buffer.h"
 
 namespace webrtc {
 namespace rtcp {

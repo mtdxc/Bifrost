@@ -17,14 +17,14 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "webrtc/api/array_view.h"
-#include "webrtc/api/rtp_headers.h"
-#include "webrtc/api/rtp_parameters.h"
-#include "webrtc/api/video/color_space.h"
-#include "webrtc/api/video/video_content_type.h"
-#include "webrtc/api/video/video_rotation.h"
-#include "webrtc/api/video/video_timing.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "api/array_view.h"
+#include "api/rtp_headers.h"
+#include "api/rtp_parameters.h"
+#include "api/video/color_space.h"
+#include "api/video/video_content_type.h"
+#include "api/video/video_rotation.h"
+#include "api/video/video_timing.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {
 

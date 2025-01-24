@@ -17,13 +17,13 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/sequence_checker.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_header_extension_map.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/include/ulpfec_receiver.h"
-#include "webrtc/modules/rtp_rtcp/source/forward_error_correction.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet_received.h"
-#include "webrtc/rtc_base/system/no_unique_address.h"
+#include "api/sequence_checker.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/include/ulpfec_receiver.h"
+#include "modules/rtp_rtcp/source/forward_error_correction.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "rtc_base/system/no_unique_address.h"
 
 namespace webrtc {
 

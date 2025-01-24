@@ -15,15 +15,15 @@
 
 #include "absl/base/attributes.h"
 #include "absl/base/const_init.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/thread_annotations.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/thread_annotations.h"
 
 #if defined(WEBRTC_ABSL_MUTEX)
-#include "webrtc/rtc_base/synchronization/mutex_abseil.h"  // nogncheck
+#include "rtc_base/synchronization/mutex_abseil.h"  // nogncheck
 #elif defined(WEBRTC_WIN)
-#include "webrtc/rtc_base/synchronization/mutex_critical_section.h"
+#include "rtc_base/synchronization/mutex_critical_section.h"
 #elif defined(WEBRTC_POSIX)
-#include "webrtc/rtc_base/synchronization/mutex_pthread.h"
+#include "rtc_base/synchronization/mutex_pthread.h"
 #else
 #error Unsupported platform.
 #endif

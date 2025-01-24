@@ -16,10 +16,10 @@
 #include <memory>
 
 #include "absl/types/optional.h"
-#include "webrtc/api/transport/webrtc_key_value_config.h"
-#include "webrtc/modules/pacing/interval_budget.h"
-#include "webrtc/rtc_base/experiments/alr_experiment.h"
-#include "webrtc/rtc_base/experiments/struct_parameters_parser.h"
+#include "api/transport/webrtc_key_value_config.h"
+#include "modules/pacing/interval_budget.h"
+#include "rtc_base/experiments/alr_experiment.h"
+#include "rtc_base/experiments/struct_parameters_parser.h"
 
 namespace webrtc {
 

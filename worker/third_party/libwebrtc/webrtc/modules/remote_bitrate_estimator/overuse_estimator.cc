@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/remote_bitrate_estimator/overuse_estimator.h"
+#include "modules/remote_bitrate_estimator/overuse_estimator.h"
 
 #include <math.h>
 #include <string.h>
 
 #include <algorithm>
 
-#include "webrtc/api/network_state_predictor.h"
+#include "api/network_state_predictor.h"
 /* #include "modules/remote_bitrate_estimator/test/bwe_test_logging.h" */
-#include "webrtc/rtc_base/logging.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 

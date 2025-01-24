@@ -17,8 +17,8 @@
 #include <type_traits>
 
 #include "absl/types/optional.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/numerics/mod_ops.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/mod_ops.h"
 
 namespace webrtc {
 

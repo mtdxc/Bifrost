@@ -14,8 +14,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "webrtc/api/array_view.h"
-#include "webrtc/modules/include/module_fec_types.h"
+#include "api/array_view.h"
+#include "modules/include/module_fec_types.h"
 
 namespace webrtc {
 

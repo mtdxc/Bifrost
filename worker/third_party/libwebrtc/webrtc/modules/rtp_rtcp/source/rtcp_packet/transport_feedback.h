@@ -14,8 +14,8 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/units/time_delta.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/rtpfb.h"
+#include "api/units/time_delta.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/rtpfb.h"
 
 namespace webrtc {
 namespace rtcp {

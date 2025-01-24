@@ -8,18 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
 
 #include <cstdint>
 #include <cstring>
 #include <utility>
 
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_header_extensions.h"
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/logging.h"
-#include "webrtc/rtc_base/numerics/safe_conversions.h"
-#include "webrtc/rtc_base/strings/string_builder.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 namespace {

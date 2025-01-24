@@ -20,14 +20,14 @@
 #include <vector>
 
 #include "absl/types/optional.h"
-#include "webrtc/api/transport/network_types.h"
-#include "webrtc/api/transport/webrtc_key_value_config.h"
-#include "webrtc/api/units/data_rate.h"
-#include "webrtc/api/units/time_delta.h"
-#include "webrtc/api/units/timestamp.h"
-#include "webrtc/modules/congestion_controller/goog_cc/loss_based_bandwidth_estimation.h"
-#include "webrtc/modules/congestion_controller/goog_cc/loss_based_bwe_v2.h"
-#include "webrtc/rtc_base/experiments/field_trial_parser.h"
+#include "api/transport/network_types.h"
+#include "api/transport/webrtc_key_value_config.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "modules/congestion_controller/goog_cc/loss_based_bandwidth_estimation.h"
+#include "modules/congestion_controller/goog_cc/loss_based_bwe_v2.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 
 namespace webrtc {
 

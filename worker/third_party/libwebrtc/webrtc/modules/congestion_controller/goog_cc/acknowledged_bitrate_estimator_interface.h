@@ -15,10 +15,10 @@
 #include <vector>
 
 #include "absl/types/optional.h"
-#include "webrtc/api/transport/network_types.h"
-#include "webrtc/api/transport/webrtc_key_value_config.h"
-#include "webrtc/api/units/data_rate.h"
-#include "webrtc/rtc_base/experiments/struct_parameters_parser.h"
+#include "api/transport/network_types.h"
+#include "api/transport/webrtc_key_value_config.h"
+#include "api/units/data_rate.h"
+#include "rtc_base/experiments/struct_parameters_parser.h"
 
 namespace webrtc {
 

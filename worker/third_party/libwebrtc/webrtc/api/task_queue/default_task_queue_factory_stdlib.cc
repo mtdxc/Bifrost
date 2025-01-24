@@ -9,8 +9,8 @@
  */
 #include <memory>
 
-#include "webrtc/api/task_queue/task_queue_factory.h"
-#include "webrtc/rtc_base/task_queue_stdlib.h"
+#include "api/task_queue/task_queue_factory.h"
+#include "rtc_base/task_queue_stdlib.h"
 
 namespace webrtc {
 

@@ -16,7 +16,7 @@
 #include <vector>
 
 #include "absl/types/optional.h"
-#include "webrtc/api/array_view.h"
+#include "api/array_view.h"
 
 namespace webrtc {
 

@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtp_video_layers_allocation_extension.h"
+#include "modules/rtp_rtcp/source/rtp_video_layers_allocation_extension.h"
 
 #include <stddef.h>
 #include <stdint.h>
 
 #include "absl/algorithm/container.h"
-#include "webrtc/api/video/video_layers_allocation.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/rtc_base/checks.h"
+#include "api/video/video_layers_allocation.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

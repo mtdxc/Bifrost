@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
 
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/rtc_base/checks.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace rtcp {

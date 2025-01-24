@@ -24,7 +24,7 @@
 // clang-format on
 
 #include "absl/base/attributes.h"
-#include "webrtc/rtc_base/thread_annotations.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 

@@ -11,9 +11,9 @@
 #ifndef RTC_BASE_RACE_CHECKER_H_
 #define RTC_BASE_RACE_CHECKER_H_
 
-#include "webrtc/rtc_base/checks.h"
-#include "webrtc/rtc_base/platform_thread_types.h"
-#include "webrtc/rtc_base/thread_annotations.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/platform_thread_types.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace rtc {
 

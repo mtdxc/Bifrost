@@ -7,11 +7,11 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/api/task_queue/task_queue_base.h"
+#include "api/task_queue/task_queue_base.h"
 
 #include "absl/base/attributes.h"
 #include "absl/base/config.h"
-#include "webrtc/rtc_base/checks.h"
+#include "rtc_base/checks.h"
 
 #if defined(ABSL_HAVE_THREAD_LOCAL)
 

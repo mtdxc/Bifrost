@@ -13,8 +13,8 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/transport/network_types.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/app.h"
+#include "api/transport/network_types.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/app.h"
 
 namespace webrtc {
 namespace rtcp {

@@ -13,11 +13,11 @@
 #include <string>
 #include <type_traits>
 
-#include "webrtc/api/task_queue/task_queue_base.h"
-#include "webrtc/rtc_base/platform_thread_types.h"
-#include "webrtc/rtc_base/synchronization/mutex.h"
-#include "webrtc/rtc_base/system/rtc_export.h"
-#include "webrtc/rtc_base/thread_annotations.h"
+#include "api/task_queue/task_queue_base.h"
+#include "rtc_base/platform_thread_types.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/system/rtc_export.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 namespace webrtc_sequence_checker_internal {
