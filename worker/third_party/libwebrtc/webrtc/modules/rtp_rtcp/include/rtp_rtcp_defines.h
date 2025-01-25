@@ -22,7 +22,6 @@
 #include "absl/types/optional.h"
 #include "absl/types/variant.h"
 #include "api/array_view.h"
-#include "api/audio_codecs/audio_format.h"
 #include "api/rtp_headers.h"
 #include "api/transport/network_types.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/remote_estimate.h"

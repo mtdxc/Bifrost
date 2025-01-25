@@ -19,8 +19,7 @@
 #include "modules/rtp_rtcp/include/rtp_cvo.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 // TODO(bug:9855) Move kNoSpatialIdx from vp9_globals.h to common_constants
-#include "modules/video_coding/codecs/interface/common_constants.h"
-#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
+// #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
