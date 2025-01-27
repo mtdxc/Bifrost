@@ -10,13 +10,12 @@
 #ifndef WORKER_SETTING_H
 #define WORKER_SETTING_H
 
-#include <nlohmann/json.hpp>
 #include <map>
 #include <string>
 #include <vector>
-
-#include "bifrost/experiment_manager/experiment_manager.h"
 #include "common.h"
+#include <nlohmann/json.hpp>
+#include "bifrost/experiment_manager/experiment_manager.h"
 
 namespace bifrost {
 class Settings {
@@ -50,7 +49,7 @@ class Settings {
   static void PrintConfiguration();
 
  public:
-  static sockaddr get_sockaddr_by_config(Configuration& config);
+  static sockaddr_storage get_sockaddr_by_config(Configuration& config);
 
  public:
   static struct AddressConfiguration config_;

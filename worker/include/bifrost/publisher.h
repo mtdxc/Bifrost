@@ -51,18 +51,18 @@ class Publisher : public UvTimer::Listener, public BifrostPacer::Observer {
     else
       this->nack_->OnSendRtpPacket(packet);
 
-    this->observer_->OnPublisherSendPacket(packet, udp_remote_address_.get());
+    this->observer_->OnPublisherSendPacket(packet, (sockaddr*)&udp_remote_address_);
   }
   void OnPublisherSendReTransPacket(RtpPacketPtr packet) override {
     // 发送算法需要记录发送内容
     this->bifrost_send_algorithm_manager_->OnRtpPacketSend(
         packet, this->uv_loop_->get_time_ms_int64());
 
-    this->observer_->OnPublisherSendPacket(packet, udp_remote_address_.get());
+    this->observer_->OnPublisherSendPacket(packet, (sockaddr*)&udp_remote_address_);
   }
 
   void OnPublisherSendRtcpPacket(CompoundPacketPtr packet) override {
-    this->observer_->OnPublisherSendRtcpPacket(packet, udp_remote_address_.get());
+    this->observer_->OnPublisherSendRtcpPacket(packet, (sockaddr*)&udp_remote_address_);
   }
 
  public:
@@ -90,7 +90,7 @@ class Publisher : public UvTimer::Listener, public BifrostPacer::Observer {
   // observer
   Observer* observer_;
   // remote addr
-  SockAddressPtr udp_remote_address_;
+  sockaddr_storage udp_remote_address_;
   // addr config
   Settings::Configuration remote_addr_config_;
   // uv

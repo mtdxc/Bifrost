@@ -54,8 +54,7 @@ void Settings::SetConfiguration(int argc, char* argv[]) {
     switch (c) {
       case 'P': {
         try {
-          Settings::config_.local_receive_configuration_.rtcPort =
-              static_cast<uint16_t>(std::stoi(optarg));
+          Settings::config_.local_receive_configuration_.rtcPort = std::stoi(optarg);
         } catch (const std::exception& error) {
           RTC_LOG(WARNING) << "%s" << error.what();
         }
@@ -66,8 +65,7 @@ void Settings::SetConfiguration(int argc, char* argv[]) {
       case 'I': {
         try {
           stringValue = std::string(optarg);
-          Settings::config_.local_receive_configuration_.rtcIp =
-              stringValue;
+          Settings::config_.local_receive_configuration_.rtcIp = stringValue;
         } catch (const std::exception& error) {
           RTC_LOG(WARNING) << "%s" << error.what();
         }
@@ -84,11 +82,11 @@ void Settings::SetConfiguration(int argc, char* argv[]) {
 #endif
 }
 
-sockaddr Settings::get_sockaddr_by_config(Configuration& publish_config) {
+sockaddr_storage Settings::get_sockaddr_by_config(Configuration& publish_config) {
   std::string ip(publish_config.rtcIp);
   uint16_t port(publish_config.rtcPort);
 
-  sockaddr remote_addr;
+  sockaddr_storage remote_addr;
 
   int err;
 

@@ -29,8 +29,7 @@ Publisher::Publisher(Settings::Configuration& remote_config, UvLoop* uv_loop,
   RTC_LOG(INFO) << "publish experiment manager:" << experiment_manager;
   
   // 1.remote address set
-  auto remote_addr = Settings::get_sockaddr_by_config(remote_config);
-  udp_remote_address_ = std::make_shared<sockaddr>(remote_addr);
+  udp_remote_address_ = Settings::get_sockaddr_by_config(remote_config);
 
   // 3.timer start
   send_report_timer_ = new UvTimer(this, uv_loop_->get_loop());
@@ -178,7 +177,7 @@ void Publisher::OnTimer(UvTimer* timer) {
     auto* report = GetRtcpSenderReport(now);
     packet->AddSenderReport(report);
     packet->Serialize(Buffer);
-    observer_->OnPublisherSendRtcpPacket(packet, udp_remote_address_.get());
+    observer_->OnPublisherSendRtcpPacket(packet, (sockaddr*)&udp_remote_address_);
   }
 
   if (timer == update_pacing_info_timer_) {
