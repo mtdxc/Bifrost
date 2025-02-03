@@ -36,24 +36,24 @@ const void* GetSystemQueueRef() {
 SequenceCheckerImpl::SequenceCheckerImpl()
     : attached_(true),
       valid_thread_(rtc::CurrentThreadRef()),
-      valid_queue_(TaskQueueBase::Current()),
+      //valid_queue_(TaskQueueBase::Current()),
       valid_system_queue_(GetSystemQueueRef()) {}
 
 bool SequenceCheckerImpl::IsCurrent() const {
-  const TaskQueueBase* const current_queue = TaskQueueBase::Current();
+  //const TaskQueueBase* const current_queue = TaskQueueBase::Current();
   const rtc::PlatformThreadRef current_thread = rtc::CurrentThreadRef();
   const void* const current_system_queue = GetSystemQueueRef();
   MutexLock scoped_lock(&lock_);
   if (!attached_) {  // Previously detached.
     attached_ = true;
     valid_thread_ = current_thread;
-    valid_queue_ = current_queue;
+    //valid_queue_ = current_queue;
     valid_system_queue_ = current_system_queue;
     return true;
   }
-  if (valid_queue_) {
-    return valid_queue_ == current_queue;
-  }
+  // if (valid_queue_) {
+  //   return valid_queue_ == current_queue;
+  // }
   if (valid_system_queue_ && valid_system_queue_ == current_system_queue) {
     return true;
   }
@@ -69,7 +69,7 @@ void SequenceCheckerImpl::Detach() {
 
 #if RTC_DCHECK_IS_ON
 std::string SequenceCheckerImpl::ExpectationToString() const {
-  const TaskQueueBase* const current_queue = TaskQueueBase::Current();
+  //const TaskQueueBase* const current_queue = TaskQueueBase::Current();
   const rtc::PlatformThreadRef current_thread = rtc::CurrentThreadRef();
   const void* const current_system_queue = GetSystemQueueRef();
   MutexLock scoped_lock(&lock_);
@@ -84,6 +84,7 @@ std::string SequenceCheckerImpl::ExpectationToString() const {
   // TaskQueue doesn't match
 
   rtc::StringBuilder message;
+#if 0
   message.AppendFormat(
       "# Expected: TQ: %p SysQ: %p Thread: %p\n"
       "# Actual:   TQ: %p SysQ: %p Thread: %p\n",
@@ -93,7 +94,9 @@ std::string SequenceCheckerImpl::ExpectationToString() const {
 
   if ((valid_queue_ || current_queue) && valid_queue_ != current_queue) {
     message << "TaskQueue doesn't match\n";
-  } else if (valid_system_queue_ &&
+  } else
+#endif 
+  if (valid_system_queue_ &&
              valid_system_queue_ != current_system_queue) {
     message << "System queue doesn't match\n";
   } else if (!rtc::IsThreadRefEqual(valid_thread_, current_thread)) {

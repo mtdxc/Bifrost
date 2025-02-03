@@ -13,7 +13,7 @@
 #include <string>
 #include <type_traits>
 
-#include "api/task_queue/task_queue_base.h"
+//#include "api/task_queue/task_queue_base.h"
 #include "rtc_base/platform_thread_types.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/rtc_export.h"
@@ -49,7 +49,7 @@ class RTC_EXPORT SequenceCheckerImpl {
   // These are mutable so that IsCurrent can set them.
   mutable bool attached_ RTC_GUARDED_BY(lock_);
   mutable rtc::PlatformThreadRef valid_thread_ RTC_GUARDED_BY(lock_);
-  mutable const TaskQueueBase* valid_queue_ RTC_GUARDED_BY(lock_);
+  //mutable const TaskQueueBase* valid_queue_ RTC_GUARDED_BY(lock_);
   mutable const void* valid_system_queue_ RTC_GUARDED_BY(lock_);
 };
 
