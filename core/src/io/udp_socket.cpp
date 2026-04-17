@@ -136,8 +136,7 @@ namespace CoreIO {
 						}
 				}
 
-				if (const int err = uv_udp_recv_start(uv_handle_, OnAlloc, OnRecv);
-				    err != 0)
+				if (uv_udp_recv_start(uv_handle_, OnAlloc, OnRecv) != 0)
 				{
 						uv_close(reinterpret_cast<uv_handle_t*>(uv_handle_), OnCloseUdp);
 						return false;

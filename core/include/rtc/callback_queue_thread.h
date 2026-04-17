@@ -1,4 +1,4 @@
-/*******************************************************
+﻿/*******************************************************
  * @author      : dog head
  * @date        : Created in 2024/11/8 11:28
  * @mail        : fangruiqian.frq@alibaba-inc.com
@@ -18,26 +18,9 @@
 #include <mutex>
 #include <thread>
 #include <vector>
-
 namespace RTC {
-		static bool IsLargeSeq(uint16_t small, uint16_t big, bool& has_routing) {
-				if (big > small) {
-						if (big - small > 65535 / 2) {
-								return false; // 异常情况，翻转跳跃了一个很大的数
-						} else {
-								return true; // 正常情况
-						}
-				} else {
-						if (small - big > 65535 / 2) {
-								has_routing = true;
-								return true; // 正常情况 small > big, 数据翻转到从 0 开始，因此也是大数
-						} else {
-								return false; // 异常情况 small > big,
-								              // 小于65535/2那么这个数可能跳跃了很大一个数
-						}
-				}
-		}
-
+		void sleep(int ms);
+		bool IsLargeSeq(uint16_t small1, uint16_t big, bool& has_routing);
 		class ThreadRtpPacketQueue {
 		private:
 				std::map<uint32_t, RTCUtils::CopyOnWriteBuffer> packet_map_;
@@ -62,67 +45,11 @@ namespace RTC {
 				}
 
 				// 入队操作
-				void Push(uint16_t seq, const RTCUtils::CopyOnWriteBuffer& packet_buffer) {
-						std::lock_guard<std::mutex> lock(mutex_);
-						if (this->is_start_) {
-								this->max_seq_  = seq;
-								this->is_start_ = false;
-						}
-
-						bool has_routing = false;
-						if (IsLargeSeq(max_seq_, seq, has_routing)) {
-								max_seq_ = seq;
-						}
-						if (has_routing) {
-								this->cycle_++;
-						}
-						uint32_t large_seq = (cycle_ << 16) + seq;
-						SPDLOG_INFO("push seq:{}", large_seq);
-						packet_map_.emplace(large_seq, packet_buffer);
-						is_empty_.notify_one(); // 通知一个等待的出队线程
-
-						this->FindContinuousPacket();
-				}
+				void Push(uint16_t seq, const RTCUtils::CopyOnWriteBuffer& packet_buffer);
 
 				// 出队操作
-				bool Pop(std::vector<RTCUtils::CopyOnWriteBuffer>& packet_buffers) {
-						std::unique_lock<std::mutex> lock(mutex_);
-						is_empty_.wait(lock, [this] {
-								return !packet_map_.empty();
-						}); // 等待直到队列不为空
-						if (packet_map_.empty()) {
-								return false;
-						}
-
-						// 只有第一个弹出后，才需要确定有序情况
-						is_disorder_.wait(lock);
-
-						auto begin = this->packet_map_.begin();
-						while (begin != this->packet_map_.end()
-						       && waite_pop_seq_ == begin->first)
-						{
-								packet_buffers.push_back(std::move(begin->second));
-								waite_pop_seq_ = waite_pop_seq_ + 1;
-								SPDLOG_INFO("pop seq:{}", begin->first);
-								begin = this->packet_map_.erase(begin);
-								usleep(200);
-						}
-
-						return true;
-				}
-
-				bool FindContinuousPacket() {
-						if (packet_map_.empty()) {
-								return false;
-						}
-
-						auto begin = this->packet_map_.begin();
-						if (begin->first == waite_pop_seq_) {
-								is_disorder_.notify_one();
-								return true;
-						}
-						return false;
-				}
+				bool Pop(std::vector<RTCUtils::CopyOnWriteBuffer>& packet_buffers);
+				bool FindContinuousPacket();
 
 				// 检查队列是否为空
 				bool Empty() const {
@@ -158,7 +85,7 @@ namespace RTC {
 				void TryCallData();
 
 		private:
-				volatile u_int16_t wait_pop_frames_{ 0 };
+				volatile uint16_t wait_pop_frames_{ 0 };
 				std::unique_ptr<std::thread> thread_;
 				std::unique_ptr<ThreadRtpPacketQueue> thread_queue_;
 				Listener* listener_{ nullptr };

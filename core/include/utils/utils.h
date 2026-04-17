@@ -17,7 +17,17 @@
 #include <sstream>
 #include <string>
 #include <assert.h>
-
+#include <stdarg.h>
+#include <string.h>
+#if defined(_MSC_VER)
+#include <intrin.h>
+#define popcnt __popcnt
+#elif defined(__GNUC__) || defined(__clang__)
+#define popcnt __builtin_popcount
+#endif
+#ifndef uint
+#define uint unsigned int
+#endif
 namespace RTCUtils {
 
 		class NetTools {
@@ -332,7 +342,7 @@ namespace RTCUtils {
 		class Bits {
 		public:
 				static size_t CountSetBits(const uint16_t mask) {
-						return static_cast<size_t>(__builtin_popcount(mask));
+						return static_cast<size_t>(popcnt(mask));
 				}
 		};
 

@@ -14,7 +14,9 @@
 #include <string>
 #include <stdint.h>
 #include <sstream>
+#ifndef _WIN32
 #include <netdb.h>
+#endif
 
 namespace cpp_streamer
 {

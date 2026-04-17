@@ -462,16 +462,14 @@ namespace RTC {
 
 		void RtcTransport::SendRtcpPacket() {
 				std::unique_lock<std::mutex> lock(thread_mutex_);
-
+				uint8_t data[1536];
 				for (auto& rtp_receive_stream : this->rtp_receive_streams_) {
 						auto rtcp_packet = Cpp11Adaptor::make_unique<RTCP::CompoundPacket>();
-						auto receive_report
-						    = rtp_receive_stream.second->GetRtcpReceiverReport();
+						auto receive_report = rtp_receive_stream.second->GetRtcpReceiverReport();
 						if (receive_report) {
-								rtcp_packet->AddReceiverReport(receive_report);
+							rtcp_packet->AddReceiverReport(receive_report);
 						}
 
-						uint8_t data[rtcp_packet->GetSize()];
 						rtcp_packet->Serialize(data);
 
 						this->listener_->OnPacketSent(
@@ -488,7 +486,6 @@ namespace RTC {
 								rtcp_packet->AddSenderReport(send_report);
 						}
 
-						uint8_t data[rtcp_packet->GetSize()];
 						rtcp_packet->Serialize(data);
 
 						this->listener_->OnPacketSent(

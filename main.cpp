@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 #include <vector>
 
 #include "api/rtc_factory.h"
@@ -31,7 +33,7 @@ int main() {
 		auto iface_client1 = RTCApi::RtcFactory::CreateRtc(&test, "0.0.0.0", 9000);
 		iface_client1->CreateRtpReceiverStream(333222111, "127.0.0.1", 7000, true);
 
-		sleep(1);
+		//sleep(1);
 
 		// 使用std::ostringstream格式化字符串
 		std::ostringstream oss;
@@ -141,7 +143,7 @@ int main() {
 				}
 		}
 
-		sleep(100000);
+		//sleep(100000);
 
 		return 0;
 }

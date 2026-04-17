@@ -74,9 +74,8 @@ namespace RTC {
 						uint8_t count = header->count;
 
 						while ((count-- != 0u) && (len > offset)) {
-								if (auto report
-								    = ReceiverReport::Parse(data + offset, len - offset);
-								    report != nullptr)
+								auto report = ReceiverReport::Parse(data + offset, len - offset);
+								if (report != nullptr)
 								{
 										packet->AddReport(std::move(report));
 										offset += report->GetSize();

@@ -8,7 +8,9 @@
  *******************************************************/
 
 #include "io/net_io_factory.h"
+#ifndef _WIN32
 #include "netdb.h"
+#endif
 
 namespace CoreIO {
 		NetIOFactory::NetIOFactory() {}

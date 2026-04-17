@@ -44,7 +44,7 @@ namespace CoreIO {
 				// SPDLOG_TRACE();
 
 				loop_ = new uv_loop_t;
-				if (const int err = uv_loop_init(loop_); err != 0) {
+				if (uv_loop_init(loop_) != 0) {
 						// SPDLOG_ERROR("libuv Init failed ...");
 						return false;
 				}
