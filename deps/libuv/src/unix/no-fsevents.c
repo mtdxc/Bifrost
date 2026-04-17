@@ -22,15 +22,21 @@
 #include "uv.h"
 #include "internal.h"
 
-#include <stdint.h>
-#include <sys/sysinfo.h>
+#include <errno.h>
 
-void uv_loadavg(double avg[3]) {
-  struct sysinfo info;
+int uv_fs_event_init(uv_loop_t* loop, uv_fs_event_t* handle) {
+  return UV_ENOSYS;
+}
 
-  if (sysinfo(&info) < 0) return;
+int uv_fs_event_start(uv_fs_event_t* handle, uv_fs_event_cb cb,
+                      const char* filename, unsigned int flags) {
+  return UV_ENOSYS;
+}
 
-  avg[0] = (double) info.loads[0] / 65536.0;
-  avg[1] = (double) info.loads[1] / 65536.0;
-  avg[2] = (double) info.loads[2] / 65536.0;
+int uv_fs_event_stop(uv_fs_event_t* handle) {
+  return UV_ENOSYS;
+}
+
+void uv__fs_event_close(uv_fs_event_t* handle) {
+  UNREACHABLE();
 }

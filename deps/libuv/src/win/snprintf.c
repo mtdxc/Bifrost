@@ -1,4 +1,4 @@
-/* Copyright libuv project contributors. All rights reserved.
+/* Copyright the libuv project contributors. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -19,18 +19,24 @@
  * IN THE SOFTWARE.
  */
 
-#include "uv.h"
-#include "internal.h"
+#if defined(_MSC_VER) && _MSC_VER < 1900
 
-#include <stdint.h>
-#include <sys/sysinfo.h>
+#include <stdio.h>
+#include <stdarg.h>
 
-void uv_loadavg(double avg[3]) {
-  struct sysinfo info;
+/* Emulate snprintf() on MSVC<2015, _snprintf() doesn't zero-terminate the buffer
+ * on overflow...
+ */
+int snprintf(char* buf, size_t len, const char* fmt, ...) {
+  int n;
+  va_list ap;
+  va_start(ap, fmt);
 
-  if (sysinfo(&info) < 0) return;
+  n = _vscprintf(fmt, ap);
+  vsnprintf_s(buf, len, _TRUNCATE, fmt, ap);
 
-  avg[0] = (double) info.loads[0] / 65536.0;
-  avg[1] = (double) info.loads[1] / 65536.0;
-  avg[2] = (double) info.loads[2] / 65536.0;
+  va_end(ap);
+  return n;
 }
+
+#endif

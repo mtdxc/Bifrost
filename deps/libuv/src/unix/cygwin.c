@@ -22,15 +22,36 @@
 #include "uv.h"
 #include "internal.h"
 
-#include <stdint.h>
 #include <sys/sysinfo.h>
+#include <unistd.h>
 
-void uv_loadavg(double avg[3]) {
+int uv_uptime(double* uptime) {
   struct sysinfo info;
 
-  if (sysinfo(&info) < 0) return;
+  if (sysinfo(&info) < 0)
+    return UV__ERR(errno);
 
-  avg[0] = (double) info.loads[0] / 65536.0;
-  avg[1] = (double) info.loads[1] / 65536.0;
-  avg[2] = (double) info.loads[2] / 65536.0;
+  *uptime = info.uptime;
+  return 0;
+}
+
+int uv_resident_set_memory(size_t* rss) {
+  /* FIXME: read /proc/meminfo? */
+  *rss = 0;
+  return 0;
+}
+
+int uv_cpu_info(uv_cpu_info_t** cpu_infos, int* count) {
+  /* FIXME: read /proc/stat? */
+  *cpu_infos = NULL;
+  *count = 0;
+  return UV_ENOSYS;
+}
+
+uint64_t uv_get_constrained_memory(void) {
+  return 0;  /* Memory constraints are unknown. */
+}
+
+uint64_t uv_get_available_memory(void) {
+  return uv_get_free_memory();
 }

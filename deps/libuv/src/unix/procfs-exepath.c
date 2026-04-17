@@ -22,15 +22,24 @@
 #include "uv.h"
 #include "internal.h"
 
-#include <stdint.h>
-#include <sys/sysinfo.h>
+#include <stddef.h>
+#include <unistd.h>
 
-void uv_loadavg(double avg[3]) {
-  struct sysinfo info;
+int uv_exepath(char* buffer, size_t* size) {
+  ssize_t n;
 
-  if (sysinfo(&info) < 0) return;
+  if (buffer == NULL || size == NULL || *size == 0)
+    return UV_EINVAL;
 
-  avg[0] = (double) info.loads[0] / 65536.0;
-  avg[1] = (double) info.loads[1] / 65536.0;
-  avg[2] = (double) info.loads[2] / 65536.0;
+  n = *size - 1;
+  if (n > 0)
+    n = readlink("/proc/self/exe", buffer, n);
+
+  if (n == -1)
+    return UV__ERR(errno);
+
+  buffer[n] = '\0';
+  *size = n;
+
+  return 0;
 }

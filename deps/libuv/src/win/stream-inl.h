@@ -1,4 +1,4 @@
-/* Copyright libuv project contributors. All rights reserved.
+/* Copyright Joyent, Inc. and other Node contributors. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -19,18 +19,36 @@
  * IN THE SOFTWARE.
  */
 
+#ifndef UV_WIN_STREAM_INL_H_
+#define UV_WIN_STREAM_INL_H_
+
+#include <assert.h>
+
 #include "uv.h"
 #include "internal.h"
+#include "handle-inl.h"
+#include "req-inl.h"
 
-#include <stdint.h>
-#include <sys/sysinfo.h>
 
-void uv_loadavg(double avg[3]) {
-  struct sysinfo info;
+INLINE static void uv__stream_init(uv_loop_t* loop,
+                                   uv_stream_t* handle,
+                                   uv_handle_type type) {
+  uv__handle_init(loop, (uv_handle_t*) handle, type);
+  handle->write_queue_size = 0;
+  handle->activecnt = 0;
+  handle->stream.conn.shutdown_req = NULL;
+  handle->stream.conn.write_reqs_pending = 0;
 
-  if (sysinfo(&info) < 0) return;
-
-  avg[0] = (double) info.loads[0] / 65536.0;
-  avg[1] = (double) info.loads[1] / 65536.0;
-  avg[2] = (double) info.loads[2] / 65536.0;
+  UV_REQ_INIT(&handle->read_req, UV_READ);
+  handle->read_req.event_handle = NULL;
+  handle->read_req.wait_handle = INVALID_HANDLE_VALUE;
+  handle->read_req.data = handle;
 }
+
+
+INLINE static void uv__connection_init(uv_stream_t* handle) {
+  handle->flags |= UV_HANDLE_CONNECTION;
+}
+
+
+#endif /* UV_WIN_STREAM_INL_H_ */

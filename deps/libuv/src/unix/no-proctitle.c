@@ -22,15 +22,24 @@
 #include "uv.h"
 #include "internal.h"
 
-#include <stdint.h>
-#include <sys/sysinfo.h>
+#include <errno.h>
+#include <stddef.h>
 
-void uv_loadavg(double avg[3]) {
-  struct sysinfo info;
+char** uv_setup_args(int argc, char** argv) {
+  return argv;
+}
 
-  if (sysinfo(&info) < 0) return;
+void uv__process_title_cleanup(void) {
+}
 
-  avg[0] = (double) info.loads[0] / 65536.0;
-  avg[1] = (double) info.loads[1] / 65536.0;
-  avg[2] = (double) info.loads[2] / 65536.0;
+int uv_set_process_title(const char* title) {
+  return 0;
+}
+
+int uv_get_process_title(char* buffer, size_t size) {
+  if (buffer == NULL || size == 0)
+    return UV_EINVAL;
+
+  buffer[0] = '\0';
+  return 0;
 }

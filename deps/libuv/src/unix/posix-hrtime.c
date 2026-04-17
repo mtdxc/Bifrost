@@ -23,14 +23,14 @@
 #include "internal.h"
 
 #include <stdint.h>
-#include <sys/sysinfo.h>
+#include <stdlib.h>
+#include <time.h>
 
-void uv_loadavg(double avg[3]) {
-  struct sysinfo info;
+uint64_t uv__hrtime(uv_clocktype_t type) {
+  struct timespec t;
 
-  if (sysinfo(&info) < 0) return;
+  if (clock_gettime(CLOCK_MONOTONIC, &t))
+    abort();
 
-  avg[0] = (double) info.loads[0] / 65536.0;
-  avg[1] = (double) info.loads[1] / 65536.0;
-  avg[2] = (double) info.loads[2] / 65536.0;
+  return t.tv_sec * (uint64_t) 1e9 + t.tv_nsec;
 }

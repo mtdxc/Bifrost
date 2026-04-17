@@ -25,12 +25,18 @@
 #include <stdint.h>
 #include <sys/sysinfo.h>
 
-void uv_loadavg(double avg[3]) {
+uint64_t uv_get_free_memory(void) {
   struct sysinfo info;
 
-  if (sysinfo(&info) < 0) return;
+  if (sysinfo(&info) == 0)
+    return (uint64_t) info.freeram * info.mem_unit;
+  return 0;
+}
 
-  avg[0] = (double) info.loads[0] / 65536.0;
-  avg[1] = (double) info.loads[1] / 65536.0;
-  avg[2] = (double) info.loads[2] / 65536.0;
+uint64_t uv_get_total_memory(void) {
+  struct sysinfo info;
+
+  if (sysinfo(&info) == 0)
+    return (uint64_t) info.totalram * info.mem_unit;
+  return 0;
 }
